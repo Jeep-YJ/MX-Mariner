@@ -1,0 +1,26 @@
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:key="TopLevelPreferences"
+	>
+	<PreferenceScreen
+		android:title="Charts"
+		android:summary="Chart Preferences"
+		android:key="MapPreferences"
+		>
+		<EditTextPreference
+			android:key="PrefMapLocation"
+			android:title="Location of chart file"
+			android:summary="Change the path to the chart data file"
+			android:defaultValue="/sdcard/mxmariner/r13.gemf"
+			/>
+	</PreferenceScreen>
+<!--<PreferenceScreen 
+		android:title="View" 
+		android:summary="View Preferences" 
+		android:key="ViewPreferences">
+		<PreferenceScreen 
+			android:layout="@layout/view_prefs">
+		</PreferenceScreen>
+	</PreferenceScreen> -->
+</PreferenceScreen>
+

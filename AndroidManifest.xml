@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	package="aocpn.mapdroid" 
+	android:versionName="@string/app_version"
+	android:versionCode="1">
+	<supports-screens 
+		android:largeScreens="true"
+		android:normalScreens="true" 
+		android:anyDensity="true" />
+	<uses-sdk 
+		android:minSdkVersion="7" />
+	<application 
+		android:label="@string/app_name" 
+		android:icon="@drawable/follow"
+		android:theme="@android:style/Theme.NoTitleBar">
+		<activity 
+			android:name="MapDroidActivity" 
+			android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+		<activity 
+			android:name="aocpn.mapdroid.SettingsDialog"
+			android:label="@string/app_name" />
+	</application>
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+</manifest> 

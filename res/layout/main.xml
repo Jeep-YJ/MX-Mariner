@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" 
+	android:layout_height="fill_parent">
+	<aocpn.mapdroid.MapView
+		android:layout_width="fill_parent" 
+		android:layout_height="fill_parent"
+		android:scaleType="centerInside" 
+		android:id="@+id/mapView"
+		android:keepScreenOn="true" />
+
+	<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="fill_parent" 
+		android:layout_height="fill_parent"
+		android:id="@+id/ddnMask" 
+		android:background="@color/day">
+	</FrameLayout>
+
+	<LinearLayout 
+		android:layout_width="fill_parent"
+		android:id="@+id/linearLayout_hud" 
+		android:layout_height="wrap_content"
+		android:background="@color/hud_bg">
+		<TextView 
+			android:id="@+id/sog_label" 
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" 
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:textColor="@color/hud_txt" 
+			android:text="SOG: " />
+		<TextView 
+			android:id="@+id/sog" 
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" 
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:textColor="@color/hud_txt" 
+			android:text="0.0kts | " />
+		<TextView 
+			android:id="@+id/cog_label" 
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" 
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:textColor="@color/hud_txt" android:text="COG: " />
+		<TextView 
+			android:id="@+id/cog" 
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" 
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:textColor="@color/hud_txt" 
+			android:text="0.0° " />
+	</LinearLayout>
+
+	<LinearLayout 
+		android:layout_width="fill_parent"
+		android:id="@+id/linearLayout_buttons" 
+		android:layout_gravity="bottom"
+		android:layout_height="90dp">
+		<Button 
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" 
+			android:layout_gravity="bottom|right"
+			android:id="@+id/btnZoomIn" 
+			android:background="@drawable/zoomin"
+			android:layout_marginRight="5px" 
+			android:layout_marginBottom="5px"
+			android:layout_marginLeft="15px" />
+		<Button 
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" 
+			android:layout_gravity="bottom|right"
+			android:id="@+id/btnZoomOut" 
+			android:background="@drawable/zoomout"
+			android:layout_margin="5px" />
+		<Button 
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" 
+			android:layout_gravity="bottom|right"
+			android:id="@+id/btnFollow" 
+			android:background="@drawable/follow"
+			android:layout_margin="5px" />
+		<Button 
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" 
+			android:layout_gravity="bottom|right"
+			android:id="@+id/btnDdn" 
+			android:background="@drawable/ddn"
+			android:layout_margin="5px" />
+	</LinearLayout>
+
+</FrameLayout>
+
