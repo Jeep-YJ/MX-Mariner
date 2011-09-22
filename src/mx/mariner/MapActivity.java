@@ -238,12 +238,16 @@ public class MapActivity extends Activity {
         mapView = (MapView) findViewById(R.id.mapview);
         mActivity = (Activity) this;
         mResourceProxy = new DefaultResourceProxyImpl(getApplicationContext());
+         
 		mapView.setTileSource(TileSourceFactory.MAPNIK);
         mapView.setBuiltInZoomControls(false);
         mapView.setMultiTouchControls(true);
         mapController = mapView.getController();
         mapController.setZoom(start_zoom);
         mapController.setCenter(new GeoPoint(start_lat, start_lon));
+        
+        //MapTileProviderBase mapTileProviderBase = new MapTileProviderBase(ITileSource pTileSource);
+        //GoogleTilesOverlay googleTilesOverlay = new GoogleTilesOverlay(mapTileProviderBase, mResourceProxy);
         
         //location overlay setup
     	mLocationOverlay = new MxmMyLocationOverlay(getBaseContext(), mapView, mActivity, mResourceProxy);
