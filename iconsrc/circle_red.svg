@@ -11,15 +11,15 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="40"
-   height="40"
+   width="48"
+   height="48"
    id="svg2"
    sodipodi:version="0.32"
    inkscape:version="0.48.0 r9654"
    version="1.0"
-   sodipodi:docname="ship_red.svg"
+   sodipodi:docname="circle_red.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   inkscape:export-filename="C:\Users\will\Dev_Projects\android_workspace\MX Mariner\res\drawable\ship.png"
+   inkscape:export-filename="C:\Users\will\Dev_Projects\android_workspace\MX Mariner\res\drawable\circle.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -2695,26 +2695,6 @@
        y1="46.015327"
        x2="-26.434509"
        y2="46.141598" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3349"
-       id="linearGradient4191"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.56718019,0,0,0.56718019,-51.656976,2.446494)"
-       x1="-3.5798087"
-       y1="46.015327"
-       x2="-26.434509"
-       y2="46.141598" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient4150"
-       id="linearGradient4193"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(-0.18364673,0,0,0.19728493,-43.650514,20.447791)"
-       x1="112.91203"
-       y1="27.316193"
-       x2="76.867836"
-       y2="27.332016" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -2726,24 +2706,24 @@
      objecttolerance="10"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="5.6568542"
-     inkscape:cx="23.177099"
-     inkscape:cy="30.786158"
+     inkscape:zoom="4"
+     inkscape:cx="-37.035463"
+     inkscape:cy="35.675584"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      width="128px"
      height="128px"
      showgrid="false"
-     inkscape:window-width="1362"
-     inkscape:window-height="742"
-     inkscape:window-x="0"
-     inkscape:window-y="25"
+     inkscape:window-width="1366"
+     inkscape:window-height="706"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
      inkscape:snap-global="false"
      showguides="false"
      units="px"
      inkscape:snap-guide="false"
      inkscape:snap-intersection-line-segments="true"
-     inkscape:window-maximized="0">
+     inkscape:window-maximized="1">
     <inkscape:grid
        id="GridFromPre046Settings"
        type="xygrid"
@@ -2785,11 +2765,11 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(24.171777,-21.385256)">
+     transform="translate(24.171777,-13.385256)">
     <path
-       style="opacity:0.7;fill:#d83f3f;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.58371878;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m -4.171197,24.516401 c -1.028768,0.631066 -11.721366,7.856241 -6.069013,33.014034 0.323664,0.883088 1.377006,0.619564 1.377006,0.619564 l 4.590007,0.04426 4.794012,0 c 0,0 1.053328,0.21925 1.377002,-0.663821 C 7.531639,32.455097 -3.082925,25.188697 -4.171197,24.516393 z m -0.510001,14.294281 c 1.68464,-0.179052 3.276673,0.757655 3.570008,2.124226 l 0,0.132762 c 0.22626,1.419915 -0.96436,2.691774 -2.703007,2.876556 -1.738644,0.184783 -3.343746,-0.792821 -3.570006,-2.212734 -0.226259,-1.419918 0.964362,-2.736032 2.703005,-2.920814 z"
-       id="path3391"
+       style="fill:#d83f3f;fill-opacity:1;stroke:#000000;stroke-width:0.56637168000000004;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;opacity:0.7"
+       d="m -0.17177771,29.668441 c -4.25947149,0 -7.71681349,3.457342 -7.71681349,7.716815 0,4.259472 3.457342,7.716814 7.71681349,7.716814 4.25947351,0 7.71681451,-3.457342 7.71681451,-7.716814 0,-4.259473 -3.457341,-7.716815 -7.71681451,-7.716815 z m 0.212391,4.672566 c 1.37427651,0.09155 2.54995351,1.107068 2.79645951,2.513275 l 0,0.141593 c 0.217304,1.669827 -0.949654,3.180924 -2.61946941,3.39823 -1.66981489,0.217305 -3.18092659,-0.949644 -3.39822959,-2.619469 -0.217303,-1.669826 0.949654,-3.180926 2.61946849,-3.39823 0.202243,-0.0263 0.405445,-0.04848 0.601771,-0.03539 z"
+       id="path3372"
        inkscape:connector-curvature="0" />
   </g>
 </svg>

@@ -2,12 +2,11 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" 
 	android:layout_height="fill_parent">
-	<aocpn.mapdroid.MapView
+	<org.osmdroid.views.MapView
 		android:layout_width="fill_parent" 
 		android:layout_height="fill_parent"
 		android:scaleType="centerInside" 
-		android:id="@+id/mapView"
-		android:keepScreenOn="true" />
+		android:id="@+id/mapview"/>
 
 	<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_width="fill_parent" 
@@ -88,4 +87,6 @@
 	</LinearLayout>
 
 </FrameLayout>
+
+
 

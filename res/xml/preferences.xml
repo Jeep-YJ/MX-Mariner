@@ -1,26 +1,19 @@
 <PreferenceScreen
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:key="TopLevelPreferences"
-	>
+	android:key="TopLevelPreferences">
 	<PreferenceScreen
 		android:title="Charts"
 		android:summary="Chart Preferences"
-		android:key="MapPreferences"
-		>
-		<EditTextPreference
-			android:key="PrefMapLocation"
-			android:title="Location of chart file"
-			android:summary="Change the path to the chart data file"
-			android:defaultValue="/sdcard/mxmariner/r13.gemf"
-			/>
+		android:key="MapPreferences">
+		  <ListPreference 
+		  	  android:key="PrefChartLocation" 
+			  android:title="Select Chart Region File" 
+			  android:summary="Select which marine chart region file to use.">
+		  </ListPreference>
+<!-- 		  <ListPreference  -->
+<!-- 		  	  android:key="PrefChartDownloader"  -->
+<!-- 			  android:title="Download New Chart Region Files"  -->
+<!-- 			  android:summary="Download new NOAA BSB chart regions."> -->
+<!-- 		  </ListPreference> -->
 	</PreferenceScreen>
-<!--<PreferenceScreen 
-		android:title="View" 
-		android:summary="View Preferences" 
-		android:key="ViewPreferences">
-		<PreferenceScreen 
-			android:layout="@layout/view_prefs">
-		</PreferenceScreen>
-	</PreferenceScreen> -->
 </PreferenceScreen>
-
