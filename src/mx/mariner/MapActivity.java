@@ -21,6 +21,7 @@ import org.osmdroid.util.GEMFFile;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
 import org.osmdroid.views.overlay.TilesOverlay;
 
@@ -31,6 +32,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
@@ -70,10 +72,11 @@ public class MapActivity extends Activity {
 	private int start_lon; //geopoint
 	private int start_zoom;
 	private String gemf_file;
+	private ChartOutlines chartOutlines;
 	
-	//=============================
-    // Methods & Getters & Setters
-	//=============================
+	//====================
+    // Methods
+	//====================
 	
 	void SetPreferences(SharedPreferences preferences)
 	{
@@ -173,7 +176,7 @@ public class MapActivity extends Activity {
 	{
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("About MX Mariner");
-		builder.setIcon(R.drawable.follow);
+		builder.setIcon(R.drawable.icon);
 		builder.setMessage("Website:\n" +
 						   "MXMariner.com\n\n" +
 					       "Credits:\n" +
@@ -249,6 +252,15 @@ public class MapActivity extends Activity {
         //MapTileProviderBase mapTileProviderBase = new MapTileProviderBase(ITileSource pTileSource);
         //GoogleTilesOverlay googleTilesOverlay = new GoogleTilesOverlay(mapTileProviderBase, mResourceProxy);
         
+        //chart outlines
+        chartOutlines = new ChartOutlines();
+        //TODO: make outline datastore switch when region changes
+        DataStore datastore = new DataStore(Environment.getExternalStorageDirectory()+"/mxmariner/NOAA_BSB_REGION_13");
+        for (String coordinates : datastore.getOutlines()){
+        	chartOutlines.addPathOverlay(Color.BLACK, mResourceProxy, coordinates);
+        }
+        datastore.Close();
+        
         //location overlay setup
     	mLocationOverlay = new MxmMyLocationOverlay(getBaseContext(), mapView, mActivity, mResourceProxy);
     	mLocationOverlay.enableMyLocation();
@@ -269,7 +281,7 @@ public class MapActivity extends Activity {
         btnZoomOut.setOnClickListener(ZoomOutListener);
         btnFollow.setOnClickListener(FollowListener);
         btnDdn.setOnClickListener(DayDustNightListener);
-        
+
         //settings
         mapView.setKeepScreenOn(true);        
         setBrightMode(dayDuskNight);
@@ -283,8 +295,14 @@ public class MapActivity extends Activity {
     }
     
     public void onResume() {
+    	//TODO: remove .gemf extension from menu item
     	gemf_file = "/sdcard/mxmariner/" + prefs.getString("PrefChartLocation", "");
     	gemfOverlay(gemf_file);
+    	
+    	//chart outlines
+    	for (Object path : chartOutlines.getPaths())
+        	mapView.getOverlays().add((Overlay) path);
+    			
     	mapView.getOverlays().add(mLocationOverlay);
     	mapView.getOverlays().add(mScaleBarOverlay);
     	super.onResume();

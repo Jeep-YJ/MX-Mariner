@@ -1,19 +1,67 @@
 <PreferenceScreen
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:key="TopLevelPreferences">
+	android:key="TopLevelPreferences" xmlns:android="http://schemas.android.com/apk/res/android">
 	<PreferenceScreen
-		android:title="Charts"
-		android:summary="Chart Preferences"
-		android:key="MapPreferences">
+		android:summary="Chart Preferences" 
+		android:key="MapPreferences" 
+		android:title="Charts">
 		  <ListPreference 
+		  	  android:summary="Select which marine chart region file to use." 
 		  	  android:key="PrefChartLocation" 
-			  android:title="Select Chart Region File" 
-			  android:summary="Select which marine chart region file to use.">
+		  	  android:title="Select Chart Region">
 		  </ListPreference>
-<!-- 		  <ListPreference  -->
-<!-- 		  	  android:key="PrefChartDownloader"  -->
-<!-- 			  android:title="Download New Chart Region Files"  -->
-<!-- 			  android:summary="Download new NOAA BSB chart regions."> -->
-<!-- 		  </ListPreference> -->
+		  <PreferenceScreen 
+		  	android:summary="Download new NOAA BSB chart regions from the internet." 
+		  	android:key="ChartDownloader" 
+		  	android:title="Get New Chart Regions">
+		      <Preference 
+		      	android:key="ViewNOAARegionMap" 
+		      	android:title="View Region Coverage Map">
+		      </Preference>
+		      <CheckBoxPreference
+		      	android:title="NOAA_BSB_REGION_01" 
+		      	android:key="NOAA_BSB_REGION_01" 
+		      	android:summary="Coast Guard District 01">
+		      </CheckBoxPreference>
+		      <CheckBoxPreference
+		      	android:key="NOAA_BSB_REGION_05"
+		      	android:title="NOAA_BSB_REGION_05"
+		      	android:summary="Coast Guard District 05">
+		      </CheckBoxPreference>
+		      <CheckBoxPreference
+		      	android:key="NOAA_BSB_REGION_07"
+		      	android:title="NOAA_BSB_REGION_07"
+		      	android:summary="Coast Guard District 07">
+		      </CheckBoxPreference>
+		      <CheckBoxPreference
+		      	android:key="NOAA_BSB_REGION_08"
+		      	android:title="NOAA_BSB_REGION_08"
+		      	android:summary="Coast Guard District 08">
+		      </CheckBoxPreference>
+		      <CheckBoxPreference
+		      	android:key="NOAA_BSB_REGION_09"
+		      	android:title="NOAA_BSB_REGION_09"
+		      	android:summary="Coast Guard District 09">
+		      </CheckBoxPreference>
+		      <CheckBoxPreference
+		      	android:key="NOAA_BSB_REGION_11"
+		      	android:title="NOAA_BSB_REGION_11"
+		      	android:summary="Coast Guard District 11">
+		      </CheckBoxPreference>
+		      <CheckBoxPreference
+		      	android:key="NOAA_BSB_REGION_13"
+		      	android:title="NOAA_BSB_REGION_13"
+		      	android:summary="Coast Guard District 13">
+		      </CheckBoxPreference>
+		      <CheckBoxPreference
+		      	android:key="NOAA_BSB_REGION_14"
+		      	android:title="NOAA_BSB_REGION_14"
+		      	android:summary="Coast Guard District 14">
+		      </CheckBoxPreference>
+		      <CheckBoxPreference
+		      	android:key="NOAA_BSB_REGION_17"
+		      	android:title="NOAA_BSB_REGION_17"
+		      	android:summary="Coast Guard District 17">
+		      </CheckBoxPreference>
+		  </PreferenceScreen>
 	</PreferenceScreen>
 </PreferenceScreen>

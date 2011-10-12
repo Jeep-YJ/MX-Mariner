@@ -11,8 +11,6 @@ import android.os.Environment;
 import android.util.Log;
 
 public class GemfCollection {
-	//This class takes a string pointing to a directory
-	//Can return list of gemf files in directory
 	
 	// ================
 	// Constants
@@ -33,8 +31,9 @@ public class GemfCollection {
 	private int gemfCount = 0;
 	
 	//====================
-    // Constructor
+    // Constructors
 	//====================
+	
 	public GemfCollection () {
 		this(new String(Environment.getExternalStorageDirectory()+"/mxmariner"));	
 	}
@@ -97,9 +96,9 @@ public class GemfCollection {
 		}
 	}
 	
-	// ===========================================================
-	// Getter & Setter
-	// ===========================================================
+	//====================
+    // Methods
+	//====================
 	
 	public String[] getFileList() {
 		return gemfList;

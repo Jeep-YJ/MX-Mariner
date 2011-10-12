@@ -64,15 +64,15 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
 
 	private static final Logger logger = LoggerFactory.getLogger(MxmMyLocationOverlay.class);
 
-	// ===========================================================
+	//====================
 	// Constants
-	// ===========================================================
+	//====================
 	
 	//private static final String tag = "MXM";
 
-	// ===========================================================
+	//====================
 	// Fields
-	// ===========================================================
+	//====================
 
 	protected final Paint mPaint = new Paint();
 	protected final Paint mCirclePaint = new Paint();
@@ -140,9 +140,9 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
 	private final GeoPoint mMyLocation = new GeoPoint(0, 0);
 	private final Matrix mMatrix = new Matrix();
 		
-	// ===========================================================
+	//====================
 	// Constructors
-	// ===========================================================
+	//====================
 
 	public MxmMyLocationOverlay(final Context ctx, final MapView mapView, final Activity mActivity) {
 		this(ctx, mapView, mActivity, new DefaultResourceProxyImpl(ctx));
@@ -183,9 +183,9 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
 		COMPASS_ROSE_CENTER_Y = mCompassRose.getHeight() / 2 - 0.5f;
 	}
 
-	// ===========================================================
-	// Getter & Setter
-	// ===========================================================
+	//====================
+	// Getters / Setters
+	//====================
 
 	public long getLocationUpdateMinTime() {
 		return mLocationUpdateMinTime;
@@ -321,11 +321,11 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
 		canvas.drawPicture(mCompassRose);
 		canvas.restore();
 	}
-
-	// ===========================================================
-	// Methods from SuperClass/Interfaces
-	// ===========================================================
-
+	
+	//====================
+    // SuperClass Methods
+	//====================
+	
 	@Override
 	public void draw(final Canvas canvas, final MapView mapView, final boolean shadow) {
 

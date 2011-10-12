@@ -2,11 +2,14 @@
 	<!-- Can add android:icon="@drawable/xyz" for an icon -->
 	<item
 		android:id="@+id/settings"
-		android:title="Settings"/>
+		android:title="Settings" 
+		android:icon="@drawable/settings"/>
 	<item
 		android:id="@+id/quit"
-		android:title="Quit" />
+		android:title="Quit" 
+		android:icon="@drawable/quit"/>
 	<item 
 		android:id="@+id/about" 
-		android:title="About" />
+		android:title="About"
+		android:icon="@drawable/about"/>
 </menu>
