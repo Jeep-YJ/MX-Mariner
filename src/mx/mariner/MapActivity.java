@@ -42,6 +42,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 public class MapActivity extends Activity {
 	
@@ -100,6 +101,7 @@ public class MapActivity extends Activity {
 
     private View.OnClickListener ZoomInListener = new View.OnClickListener()
 	{
+		@Override
 		public void onClick(View v)
 		{
 			//is there a better way?...zoom during follow is screwed up otherwise
@@ -112,6 +114,7 @@ public class MapActivity extends Activity {
 	};
 	private View.OnClickListener ZoomOutListener = new View.OnClickListener()
 	{
+		@Override
 		public void onClick(View v)
 		{
 			//is there a better way?...zoom during follow is screwed up otherwise
@@ -125,6 +128,7 @@ public class MapActivity extends Activity {
 	
 	private View.OnClickListener FollowListener = new View.OnClickListener()
 	{
+		@Override
 		public void onClick(View v)
 		{
 			if (!mLocationOverlay.isFollowLocationEnabled())
@@ -134,6 +138,7 @@ public class MapActivity extends Activity {
 	
 	private View.OnClickListener DayDustNightListener = new View.OnClickListener() 
 	{
+		@Override
 		public void onClick(View v)
 		{
 			dayDuskNight ++;
@@ -152,21 +157,21 @@ public class MapActivity extends Activity {
 				ddnMask.setBackgroundResource(R.color.day);
 		    	layoutParams.screenBrightness = (float) 1.0;
 		    	getWindow().setAttributes(layoutParams);
-				//Log.i(TAG, "setting to day");
+		    	Toast.makeText(this, "Day Mode", Toast.LENGTH_SHORT).show();
 		    	break;
 		    	
 			case 1:
 				ddnMask.setBackgroundResource(R.color.day);
 		    	layoutParams.screenBrightness = (float) 0.1;
 		    	getWindow().setAttributes(layoutParams);
-				//Log.i(TAG, "setting to dusk");
+		    	Toast.makeText(this, "Dusk Mode", Toast.LENGTH_SHORT).show();
 		    	break;
 		    	
 			case 2:
 				ddnMask.setBackgroundResource(R.color.night);
 		    	layoutParams.screenBrightness = (float) 0.01;
 		    	getWindow().setAttributes(layoutParams);
-				//Log.i(TAG, "setting to night");
+		    	Toast.makeText(this, "Night Mode", Toast.LENGTH_SHORT).show();
 		    	break;
 		}
 		
@@ -191,6 +196,7 @@ public class MapActivity extends Activity {
 						   "GEMF - Allen Budden\n");
 		builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
 		{
+			@Override
 			public void onClick(DialogInterface dialog, int which)
 			{
 				return;
@@ -224,6 +230,17 @@ public class MapActivity extends Activity {
 		}
     }
     
+    private void freeGemf() {
+    	//needed to prevent out of memory error when app orientation changes and/or quick consecutive launches
+    	//http://groups.google.com/group/osmdroid/browse_thread/thread/d6918e3e46c40504
+    	//http://developer.android.com/guide/topics/resources/runtime-changes.html#RetainingAnObject
+    	myArchives = null;
+    	mBitmapTileSourceBase = null;
+    	myProviders = null;
+    	myGemfTileProvider = null;
+    	myGemfOverlay = null;
+    }
+    
     public void fullexit() {
     	int pid = android.os.Process.myPid();
 		android.os.Process.killProcess(pid);
@@ -239,7 +256,7 @@ public class MapActivity extends Activity {
         setContentView(R.layout.main);
         SetPreferences(PreferenceManager.getDefaultSharedPreferences(getBaseContext())); //initial position, zoom, gemf-file
         mapView = (MapView) findViewById(R.id.mapview);
-        mActivity = (Activity) this;
+        mActivity = this;
         mResourceProxy = new DefaultResourceProxyImpl(getApplicationContext());
          
 		mapView.setTileSource(TileSourceFactory.MAPNIK);
@@ -287,14 +304,17 @@ public class MapActivity extends Activity {
         setBrightMode(dayDuskNight);
     }
     
-    public void onPause() {
+    @Override
+	public void onPause() {
     	StorePreferences();
     	mapView.getOverlays().clear();
+    	freeGemf();
     	//mapView.getOverlays().remove(myGemfOverlay);
     	super.onPause();
     }
     
-    public void onResume() {
+    @Override
+	public void onResume() {
     	//TODO: remove .gemf extension from menu item
     	gemf_file = "/sdcard/mxmariner/" + prefs.getString("PrefChartLocation", "");
     	gemfOverlay(gemf_file);

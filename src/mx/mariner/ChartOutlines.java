@@ -1,3 +1,7 @@
+// Copyright (C) 2011 by Will Kamp <manimaul!gmail.com>
+// Distributed under the terms of the Simplified BSD Licence.
+// See license.txt for details
+
 package mx.mariner;
 
 import java.util.ArrayList;

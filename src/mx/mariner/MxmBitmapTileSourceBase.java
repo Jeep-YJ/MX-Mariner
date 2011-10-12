@@ -12,4 +12,5 @@ public class MxmBitmapTileSourceBase extends BitmapTileSourceBase {
 	    public MxmBitmapTileSourceBase(String aName, string aResourceId, int aZoomMinLevel, int aZoomMaxLevel, int aTileSizePixels, String aImageFilenameEnding) {
 	        super(aName, aResourceId, aZoomMinLevel, aZoomMaxLevel, aTileSizePixels, aImageFilenameEnding);
 	    }
+	    
 }

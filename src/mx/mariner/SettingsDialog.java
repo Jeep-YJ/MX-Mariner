@@ -26,7 +26,7 @@ public class SettingsDialog extends PreferenceActivity
 		String[] entries = gemfCollection.getFileList();
 		prefChartLocation.setEntries(entries);
 		prefChartLocation.setEntryValues(entries);
-		Preference ViewNOAARegionMap = (Preference) findPreference("ViewNOAARegionMap");
+		Preference ViewNOAARegionMap = findPreference("ViewNOAARegionMap");
 		
 		
 		ViewNOAARegionMap.setOnPreferenceClickListener(onViewNOAARegionMap);
@@ -52,6 +52,7 @@ public class SettingsDialog extends PreferenceActivity
 		//TODO: add region map image here
 		builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
 		{
+			@Override
 			public void onClick(DialogInterface dialog, int which)
 			{
 				return;

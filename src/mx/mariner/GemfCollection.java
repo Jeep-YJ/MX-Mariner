@@ -1,3 +1,7 @@
+// Copyright (C) 2011 by Will Kamp <manimaul!gmail.com>
+// Distributed under the terms of the Simplified BSD Licence.
+// See license.txt for details
+
 package mx.mariner;
 
 import java.io.File;
@@ -52,7 +56,8 @@ public class GemfCollection {
 		
 		//get list of files ending in .gemf
 		FilenameFilter gemfilter = new FilenameFilter() {
-		    public boolean accept(File dir, String name) {
+		    @Override
+			public boolean accept(File dir, String name) {
 		        return name.endsWith(".gemf");
 		    }
 		}; 

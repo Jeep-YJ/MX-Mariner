@@ -1,8 +1,8 @@
-// Copyright (C) 2011 by Will Kamp <manimaul!gmail.com>
+// Originally created by plusminus on 22:01:11 - 29.09.2008
+// Modified by Will Kamp <manimaul!gmail.com>
 // Distributed under the terms of the Simplified BSD Licence.
 // See license.txt for details
 
-// Created by plusminus on 22:01:11 - 29.09.2008
 package mx.mariner;
 
 import java.util.LinkedList;
