@@ -10,6 +10,9 @@ import org.osmdroid.ResourceProxy;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.PathOverlay;
 
+import android.graphics.Paint;
+import android.util.Log;
+
 
 public class ChartOutlines {
 	
@@ -33,12 +36,19 @@ public class ChartOutlines {
 	
 	public void addPathOverlay(int color, ResourceProxy mResourceProxy, String coordinates) {
 		PathOverlay path = new PathOverlay(color, mResourceProxy);
+		Paint pPaint = new Paint();
+		pPaint.setStrokeWidth(1.0f);
+		pPaint.setColor(color);
+		pPaint.setStyle(Paint.Style.STROKE);
+		path.setPaint(pPaint);
 		
 		String[] coord = coordinates.split(":");
 		for (int i=0; i<coord.length; i++) {
-			String lat = coord[i].split(",")[0];
-			String lon = coord[i].split(",")[1];
-			path.addPoint(new GeoPoint(Double.parseDouble(lat), Double.parseDouble(lon)));
+			String[] ll = coord[i].split(",");
+			if (ll.length == 2)
+				path.addPoint(new GeoPoint(Double.parseDouble(ll[0]), Double.parseDouble(ll[1])));
+			else
+				Log.i("MXM", coord[i]);
 		}
 		
 		outlinePathOverlays.add(path);

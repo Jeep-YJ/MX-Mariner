@@ -13,7 +13,6 @@ import org.osmdroid.ResourceProxy;
 import org.osmdroid.tileprovider.MapTileProviderArray;
 import org.osmdroid.tileprovider.modules.GEMFFileArchive;
 import org.osmdroid.tileprovider.modules.IArchiveFile;
-import org.osmdroid.tileprovider.modules.MapTileFileArchiveProvider;
 import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
@@ -63,17 +62,17 @@ public class MapActivity extends Activity {
     private ScaleBarOverlay mScaleBarOverlay;
     private ResourceProxy mResourceProxy;
     private int dayDuskNight; //0-day, 1-dusk, 2-night
-    private IArchiveFile[] myArchives;
+    private IArchiveFile[] myArchives = new IArchiveFile[1];
 	private MxmBitmapTileSourceBase mBitmapTileSourceBase;
-	private MapTileModuleProviderBase[] myProviders;
+	private MapTileModuleProviderBase[] myProviders = new MapTileModuleProviderBase[1];
 	private MapTileProviderArray myGemfTileProvider;
 	private TilesOverlay myGemfOverlay;
 	private SharedPreferences prefs;
 	private int start_lat; //geopoint
 	private int start_lon; //geopoint
 	private int start_zoom;
-	private String gemf_file;
-	private ChartOutlines chartOutlines;
+	private String region;
+	private ChartOutlines chartOutlines = new ChartOutlines();
 	
 	//====================
     // Methods
@@ -86,7 +85,7 @@ public class MapActivity extends Activity {
 		start_lon = prefs.getInt("Longitude", 0);
 		start_zoom = prefs.getInt("Zoom", 3);
 		dayDuskNight = prefs.getInt("DDN", 0);
-		//gemf_file overlay set in onResume
+		//region overlay set in onResume
 	}
 	
 	void StorePreferences()
@@ -157,21 +156,21 @@ public class MapActivity extends Activity {
 				ddnMask.setBackgroundResource(R.color.day);
 		    	layoutParams.screenBrightness = (float) 1.0;
 		    	getWindow().setAttributes(layoutParams);
-		    	Toast.makeText(this, "Day Mode", Toast.LENGTH_SHORT).show();
+		    	//Toast.makeText(this, "Day Mode", Toast.LENGTH_SHORT).show();
 		    	break;
 		    	
 			case 1:
 				ddnMask.setBackgroundResource(R.color.day);
 		    	layoutParams.screenBrightness = (float) 0.1;
 		    	getWindow().setAttributes(layoutParams);
-		    	Toast.makeText(this, "Dusk Mode", Toast.LENGTH_SHORT).show();
+		    	//Toast.makeText(this, "Dusk Mode", Toast.LENGTH_SHORT).show();
 		    	break;
 		    	
 			case 2:
 				ddnMask.setBackgroundResource(R.color.night);
 		    	layoutParams.screenBrightness = (float) 0.01;
 		    	getWindow().setAttributes(layoutParams);
-		    	Toast.makeText(this, "Night Mode", Toast.LENGTH_SHORT).show();
+		    	//Toast.makeText(this, "Night Mode", Toast.LENGTH_SHORT).show();
 		    	break;
 		}
 		
@@ -207,18 +206,18 @@ public class MapActivity extends Activity {
 	}
     
     private void gemfOverlay(String gemfLocation) {
-    	File location = new File(gemfLocation);
+    	File location = new File(gemfLocation+".gemf");
     	try {
     		//get zoom levels
     		GEMFFile gemfile = new GEMFFile(location);
     		int maxZoom = (Integer) gemfile.getZoomLevels().toArray()[0];
     		int minZoom = (Integer) gemfile.getZoomLevels().toArray()[gemfile.getZoomLevels().size()-1];
     		//set up overlay
-    		myArchives = new IArchiveFile[1];
+    		//myArchives = new IArchiveFile[1];
     		myArchives[0] = GEMFFileArchive.getGEMFFileArchive(location);
-    		mBitmapTileSourceBase = new MxmBitmapTileSourceBase("test", null, minZoom, maxZoom, 256, ".png");
-    		myProviders = new MapTileModuleProviderBase[1];
-    		myProviders[0] = new MapTileFileArchiveProvider(new SimpleRegisterReceiver(getApplicationContext()), mBitmapTileSourceBase, myArchives);
+    		mBitmapTileSourceBase = new MxmBitmapTileSourceBase("test", null, minZoom, maxZoom, 256, ".png");    		
+    		//myProviders = new MapTileModuleProviderBase[1];
+    		myProviders[0] = new MxmMapTileFileArchiveProvider(new SimpleRegisterReceiver(getApplicationContext()), mBitmapTileSourceBase, myArchives);
     		myGemfTileProvider = new MapTileProviderArray(mBitmapTileSourceBase, null, myProviders);
     		myGemfOverlay = new TilesOverlay(myGemfTileProvider, getApplicationContext());
     		myGemfOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
@@ -228,17 +227,6 @@ public class MapActivity extends Activity {
 		} catch (IOException e) {
 			Log.e(tag, e.getMessage());
 		}
-    }
-    
-    private void freeGemf() {
-    	//needed to prevent out of memory error when app orientation changes and/or quick consecutive launches
-    	//http://groups.google.com/group/osmdroid/browse_thread/thread/d6918e3e46c40504
-    	//http://developer.android.com/guide/topics/resources/runtime-changes.html#RetainingAnObject
-    	myArchives = null;
-    	mBitmapTileSourceBase = null;
-    	myProviders = null;
-    	myGemfTileProvider = null;
-    	myGemfOverlay = null;
     }
     
     public void fullexit() {
@@ -269,14 +257,6 @@ public class MapActivity extends Activity {
         //MapTileProviderBase mapTileProviderBase = new MapTileProviderBase(ITileSource pTileSource);
         //GoogleTilesOverlay googleTilesOverlay = new GoogleTilesOverlay(mapTileProviderBase, mResourceProxy);
         
-        //chart outlines
-        chartOutlines = new ChartOutlines();
-        //TODO: make outline datastore switch when region changes
-        DataStore datastore = new DataStore(Environment.getExternalStorageDirectory()+"/mxmariner/NOAA_BSB_REGION_13");
-        for (String coordinates : datastore.getOutlines()){
-        	chartOutlines.addPathOverlay(Color.BLACK, mResourceProxy, coordinates);
-        }
-        datastore.Close();
         
         //location overlay setup
     	mLocationOverlay = new MxmMyLocationOverlay(getBaseContext(), mapView, mActivity, mResourceProxy);
@@ -308,18 +288,27 @@ public class MapActivity extends Activity {
 	public void onPause() {
     	StorePreferences();
     	mapView.getOverlays().clear();
-    	freeGemf();
-    	//mapView.getOverlays().remove(myGemfOverlay);
+    	myProviders[0].detach();
     	super.onPause();
     }
     
     @Override
 	public void onResume() {
-    	//TODO: remove .gemf extension from menu item
-    	gemf_file = "/sdcard/mxmariner/" + prefs.getString("PrefChartLocation", "");
-    	gemfOverlay(gemf_file);
+        region = Environment.getExternalStorageDirectory()+"/mxmariner/" + prefs.getString("PrefChartLocation", "");
+        gemfOverlay(region);
+        
+        //chart outlines
+        chartOutlines.clearPaths();
+        Toast.makeText(getApplicationContext(), region, Toast.LENGTH_LONG).show();
+        File dbf = new File(region+".s3db");
+        if (dbf.isFile()) {
+        	DataStore datastore = new DataStore(region+".s3db");
+            for (String coordinates : datastore.getOutlines()){
+            	chartOutlines.addPathOverlay(Color.rgb(219, 73, 150), mResourceProxy, coordinates);
+            }
+            datastore.Close();
+        }
     	
-    	//chart outlines
     	for (Object path : chartOutlines.getPaths())
         	mapView.getOverlays().add((Overlay) path);
     			

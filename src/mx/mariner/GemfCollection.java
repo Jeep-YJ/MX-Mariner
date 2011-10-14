@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import org.osmdroid.util.GEMFFile;
 
@@ -29,6 +31,8 @@ public class GemfCollection {
 	
 	private String gemfDir;
 	private String[] gemfList;
+	private String[] s3dbList;
+	private String[] regionList;
 	private File fGemfDir;
 	private int minZoom = 100;
 	private int maxZoom = 0;
@@ -43,6 +47,42 @@ public class GemfCollection {
 	}
 	
 	public GemfCollection (final String dir) {
+		//establishes list of collections of .gemf and corresponding .db files
+		establishCollection(dir);
+		
+		//set minimum and maximum zooms
+		setZoomLevels();
+		
+	}
+	
+	//====================
+    // Methods
+	//====================
+	
+	private static String[] lstUnion(String[] arg0, String[] arg1) {
+		HashSet<String> diff = new HashSet<String>(Arrays.asList(arg0));
+		diff.retainAll(Arrays.asList(arg1));
+		String[] a = new String[diff.size()];
+		return diff.toArray(a);
+	}
+	
+	private String[] filenameFilter(final String extention) {
+		//filter directory files
+		FilenameFilter filter = new FilenameFilter() {
+		    @Override
+			public boolean accept(File dir, String name) {
+		        return name.endsWith(extention);
+		    }
+		};
+		String [] flst = fGemfDir.list(filter);
+		//trim extensions
+		for (int i=0; i<flst.length; i++) {
+			flst[i] = flst[i].replace(extention, "");
+		}
+		return flst;
+	}
+	
+	private void establishCollection(String dir) {
 		gemfDir = dir;
 		fGemfDir = new File(gemfDir);
 		
@@ -55,21 +95,22 @@ public class GemfCollection {
 		}
 		
 		//get list of files ending in .gemf
-		FilenameFilter gemfilter = new FilenameFilter() {
-		    @Override
-			public boolean accept(File dir, String name) {
-		        return name.endsWith(".gemf");
-		    }
-		}; 
-		gemfList = fGemfDir.list(gemfilter);
+		gemfList = filenameFilter(".gemf");
 		
-		//set minimum and maximum zooms
+		//get list of files ending in .s3db
+		s3dbList = filenameFilter(".s3db");
+		
+		//make sure .gemf has corresponding .s3db file
+		regionList = lstUnion(gemfList, s3dbList);
+	}
+	
+	private void setZoomLevels() {
 		gemfCount = gemfList.length;
 		if (debug) {
 			Log.i(tag, "Gemf file found in collection: " + gemfCount);
 		}
 		for (int i=0; i<gemfCount; i++) {
-			File location = new File(gemfDir + "/" + gemfList[i]);
+			File location = new File(gemfDir + "/" + gemfList[i]+".gemf");
 			if (debug) {
 				Log.i(tag, "Gemf file " + i+1 + " " +gemfList[i]);
 			}
@@ -101,12 +142,12 @@ public class GemfCollection {
 		}
 	}
 	
-	//====================
-    // Methods
-	//====================
-	
 	public String[] getFileList() {
 		return gemfList;
+	}
+	
+	public String[] getRegionList() {
+		return regionList;
 	}
 	
 	public String getDir() {

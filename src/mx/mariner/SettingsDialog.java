@@ -5,60 +5,47 @@
 
 package mx.mariner;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceScreen;
+import android.widget.ListView;
 
 public class SettingsDialog extends PreferenceActivity 
 {
-	private GemfCollection gemfCollection;
+	private GemfCollection gemfCollection = new GemfCollection();
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
-        gemfCollection = new GemfCollection();
 		addPreferencesFromResource(R.xml.preferences);
-		ListPreference prefChartLocation = (ListPreference) findPreference("PrefChartLocation");
-		String[] entries = gemfCollection.getFileList();
+		
+		//select chart region
+		ListPreference prefChartLocation = (ListPreference) this.findPreference("PrefChartLocation");
+		String[] entries = gemfCollection.getRegionList();
 		prefChartLocation.setEntries(entries);
 		prefChartLocation.setEntryValues(entries);
-		Preference ViewNOAARegionMap = findPreference("ViewNOAARegionMap");
+		
+		//get new chart regions
+		PreferenceScreen chartDownloader = (PreferenceScreen) this.findPreference("PreferenceScreen");
+		chartDownloader.setTitle("Chart Region Downloader");
+		ListView cdl = (ListView) this.findViewById(R.id.regionLV);
+		cdl.setAdapter(adapter);
 		
 		
-		ViewNOAARegionMap.setOnPreferenceClickListener(onViewNOAARegionMap);
+//		Preference ViewNOAARegionMap = findPreference("ViewNOAARegionMap");
+//		ViewNOAARegionMap.setOnPreferenceClickListener(onViewNOAARegionMap);
 	}
 	
-	private OnPreferenceClickListener onViewNOAARegionMap = new OnPreferenceClickListener() {
-		@Override
-		public boolean onPreferenceClick(Preference preference) {
-			ShowNOAARegionMap();
-			return false;
-		}
-		
-	};
+//	private OnPreferenceClickListener onViewNOAARegionMap = new OnPreferenceClickListener() {
+//		@Override
+//		public boolean onPreferenceClick(Preference preference) {
+//			//do something
+//			return false;
+//		}
+//		
+//	};
 	
-	private void ShowNOAARegionMap()
-	{
-//		View regionView = findViewById(R.id.noaaregionview);
-//		addContentView(regionView, null);
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("NOAA Region Map");
-		builder.setIcon(R.drawable.icon);
-		//builder.setMessage("");
-		//TODO: add region map image here
-		builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
-		{
-			@Override
-			public void onClick(DialogInterface dialog, int which)
-			{
-				return;
-			}
-		}); 
-		AlertDialog alert = builder.create();
-		alert.show();
-	}
+
 }

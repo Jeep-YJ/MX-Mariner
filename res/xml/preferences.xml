@@ -13,55 +13,6 @@
 		  	android:summary="Download new NOAA BSB chart regions from the internet." 
 		  	android:key="ChartDownloader" 
 		  	android:title="Get New Chart Regions">
-		      <Preference 
-		      	android:key="ViewNOAARegionMap" 
-		      	android:title="View Region Coverage Map">
-		      </Preference>
-		      <CheckBoxPreference
-		      	android:title="NOAA_BSB_REGION_01" 
-		      	android:key="NOAA_BSB_REGION_01" 
-		      	android:summary="Coast Guard District 01">
-		      </CheckBoxPreference>
-		      <CheckBoxPreference
-		      	android:key="NOAA_BSB_REGION_05"
-		      	android:title="NOAA_BSB_REGION_05"
-		      	android:summary="Coast Guard District 05">
-		      </CheckBoxPreference>
-		      <CheckBoxPreference
-		      	android:key="NOAA_BSB_REGION_07"
-		      	android:title="NOAA_BSB_REGION_07"
-		      	android:summary="Coast Guard District 07">
-		      </CheckBoxPreference>
-		      <CheckBoxPreference
-		      	android:key="NOAA_BSB_REGION_08"
-		      	android:title="NOAA_BSB_REGION_08"
-		      	android:summary="Coast Guard District 08">
-		      </CheckBoxPreference>
-		      <CheckBoxPreference
-		      	android:key="NOAA_BSB_REGION_09"
-		      	android:title="NOAA_BSB_REGION_09"
-		      	android:summary="Coast Guard District 09">
-		      </CheckBoxPreference>
-		      <CheckBoxPreference
-		      	android:key="NOAA_BSB_REGION_11"
-		      	android:title="NOAA_BSB_REGION_11"
-		      	android:summary="Coast Guard District 11">
-		      </CheckBoxPreference>
-		      <CheckBoxPreference
-		      	android:key="NOAA_BSB_REGION_13"
-		      	android:title="NOAA_BSB_REGION_13"
-		      	android:summary="Coast Guard District 13">
-		      </CheckBoxPreference>
-		      <CheckBoxPreference
-		      	android:key="NOAA_BSB_REGION_14"
-		      	android:title="NOAA_BSB_REGION_14"
-		      	android:summary="Coast Guard District 14">
-		      </CheckBoxPreference>
-		      <CheckBoxPreference
-		      	android:key="NOAA_BSB_REGION_17"
-		      	android:title="NOAA_BSB_REGION_17"
-		      	android:summary="Coast Guard District 17">
-		      </CheckBoxPreference>
 		  </PreferenceScreen>
 	</PreferenceScreen>
 </PreferenceScreen>
