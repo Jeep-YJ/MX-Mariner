@@ -5,15 +5,17 @@
 
 package mx.mariner;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.ListPreference;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceScreen;
-import android.widget.ListView;
 
 public class SettingsDialog extends PreferenceActivity 
 {
 	private GemfCollection gemfCollection = new GemfCollection();
+	//private Context context;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) 
@@ -28,24 +30,19 @@ public class SettingsDialog extends PreferenceActivity
 		prefChartLocation.setEntryValues(entries);
 		
 		//get new chart regions
-		PreferenceScreen chartDownloader = (PreferenceScreen) this.findPreference("PreferenceScreen");
-		chartDownloader.setTitle("Chart Region Downloader");
-		ListView cdl = (ListView) this.findViewById(R.id.regionLV);
-		cdl.setAdapter(adapter);
+		Preference chartDownloader = (Preference) this.findPreference("ChartDownloader");
+		chartDownloader.setOnPreferenceClickListener(onChartDlClick);
 		
-		
-//		Preference ViewNOAARegionMap = findPreference("ViewNOAARegionMap");
-//		ViewNOAARegionMap.setOnPreferenceClickListener(onViewNOAARegionMap);
 	}
 	
-//	private OnPreferenceClickListener onViewNOAARegionMap = new OnPreferenceClickListener() {
-//		@Override
-//		public boolean onPreferenceClick(Preference preference) {
-//			//do something
-//			return false;
-//		}
-//		
-//	};
+	private OnPreferenceClickListener onChartDlClick = new OnPreferenceClickListener() {
+		public boolean onPreferenceClick(Preference preference) {
+			//Toast.makeText(getBaseContext(), "hello", Toast.LENGTH_LONG).show();
+			startActivity(new Intent(getBaseContext(), RegionActivity.class));
+			return true;
+		}
+		
+	};
 	
 
 }

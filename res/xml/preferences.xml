@@ -9,10 +9,10 @@
 		  	  android:key="PrefChartLocation" 
 		  	  android:title="Select Chart Region">
 		  </ListPreference>
-		  <PreferenceScreen 
+		  <Preference
 		  	android:summary="Download new NOAA BSB chart regions from the internet." 
 		  	android:key="ChartDownloader" 
 		  	android:title="Get New Chart Regions">
-		  </PreferenceScreen>
+		  </Preference>
 	</PreferenceScreen>
 </PreferenceScreen>
