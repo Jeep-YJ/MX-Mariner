@@ -1,18 +1,40 @@
 <PreferenceScreen
 	android:key="TopLevelPreferences" xmlns:android="http://schemas.android.com/apk/res/android">
 	<PreferenceScreen
-		android:summary="Chart Preferences" 
-		android:key="MapPreferences" 
-		android:title="Charts">
-		  <ListPreference 
-		  	  android:summary="Select which marine chart region file to use." 
-		  	  android:key="PrefChartLocation" 
-		  	  android:title="Select Chart Region">
+		android:summary="Chart view settings"
+		android:title="View"
+		android:key="ViewPrefs">
+		<CheckBoxPreference
+			android:summary="Toggles chart outlines on or off"
+			android:title="Chart Outlines"
+			android:key="OutlinePref" 
+			android:defaultValue="true">
+		</CheckBoxPreference>
+		<CheckBoxPreference
+			android:summary="Toggles zoom buttons on or off"
+			android:title="Zoom Buttons"
+			android:key="ZoomBtnPref" 
+			android:defaultValue="true">
+		</CheckBoxPreference>
+	</PreferenceScreen>
+	<PreferenceScreen
+		android:summary="Manage chart regions"
+		android:title="Charts"
+		android:key="ChartRegions">
+		  <ListPreference
+		  	android:summary="Select which marine chart region file to use."
+		  	android:title="Select Chart Region"
+		  	android:key="PrefChartLocation">
 		  </ListPreference>
 		  <Preference
-		  	android:summary="Download new NOAA BSB chart regions from the internet." 
-		  	android:key="ChartDownloader" 
-		  	android:title="Get New Chart Regions">
-		  </Preference>
+		  	android:summary="Download new NOAA BSB chart regions from the internet."
+		  	android:title="Get New Chart Regions"
+		  	android:key="ChartDownloader">
+		  </Preference>		  
 	</PreferenceScreen>
+	<Preference
+  		android:summary="Information about MX Mariner"
+  		android:title="Info"
+  		android:key="MxmInfo">
+ 	</Preference>
 </PreferenceScreen>

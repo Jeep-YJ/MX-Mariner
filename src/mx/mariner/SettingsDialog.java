@@ -15,7 +15,6 @@ import android.preference.PreferenceActivity;
 public class SettingsDialog extends PreferenceActivity 
 {
 	private GemfCollection gemfCollection = new GemfCollection();
-	//private Context context;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) 
@@ -37,12 +36,13 @@ public class SettingsDialog extends PreferenceActivity
 	
 	private OnPreferenceClickListener onChartDlClick = new OnPreferenceClickListener() {
 		public boolean onPreferenceClick(Preference preference) {
-			//Toast.makeText(getBaseContext(), "hello", Toast.LENGTH_LONG).show();
 			startActivity(new Intent(getBaseContext(), RegionActivity.class));
 			return true;
 		}
 		
 	};
+	
+	
 	
 
 }

@@ -39,21 +39,21 @@ public final class R {
         public static final int zoomout=0x7f020012;
     }
     public static final class id {
-        public static final int about=0x7f080011;
-        public static final int btnDdn=0x7f08000b;
+        public static final int about=0x7f080010;
         public static final int btnFollow=0x7f08000a;
         public static final int btnZoomIn=0x7f080008;
         public static final int btnZoomOut=0x7f080009;
         public static final int cog=0x7f080006;
         public static final int cog_label=0x7f080005;
+        public static final int ddn=0x7f08000e;
         public static final int ddnMask=0x7f080001;
         public static final int linearLayout_buttons=0x7f080007;
         public static final int linearLayout_hud=0x7f080002;
         public static final int mapview=0x7f080000;
-        public static final int quit=0x7f080010;
-        public static final int regiondesc=0x7f08000e;
-        public static final int regionicon=0x7f08000c;
-        public static final int regionname=0x7f08000d;
+        public static final int quit=0x7f080011;
+        public static final int regiondesc=0x7f08000d;
+        public static final int regionicon=0x7f08000b;
+        public static final int regionname=0x7f08000c;
         public static final int settings=0x7f08000f;
         public static final int sog=0x7f080004;
         public static final int sog_label=0x7f080003;
@@ -69,6 +69,8 @@ public final class R {
     public static final class string {
         public static final int app_name=0x7f060000;
         public static final int app_version=0x7f060001;
+        public static final int copyright=0x7f060003;
+        public static final int nav_warning=0x7f060002;
     }
     public static final class xml {
         public static final int preferences=0x7f040000;

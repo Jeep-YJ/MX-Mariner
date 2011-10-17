@@ -53,37 +53,33 @@
 		android:layout_width="fill_parent"
 		android:id="@+id/linearLayout_buttons" 
 		android:layout_gravity="bottom"
-		android:layout_height="90dp">
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="5px"
+		android:layout_marginLeft="10px">
 		<Button 
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content" 
-			android:layout_gravity="bottom|right"
+			android:layout_gravity="left"
 			android:id="@+id/btnZoomIn" 
 			android:background="@drawable/zoomin"
-			android:layout_marginRight="5px" 
-			android:layout_marginBottom="5px"
-			android:layout_marginLeft="15px" />
+			android:layout_marginRight="5px"
+			android:layout_marginLeft="5px" />
 		<Button 
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content" 
-			android:layout_gravity="bottom|right"
+			android:layout_gravity="left"
 			android:id="@+id/btnZoomOut" 
 			android:background="@drawable/zoomout"
-			android:layout_margin="5px" />
+			android:layout_marginRight="5px"
+			android:layout_marginLeft="5px" />
 		<Button 
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content" 
-			android:layout_gravity="bottom|right"
+			android:layout_gravity="right"
 			android:id="@+id/btnFollow" 
 			android:background="@drawable/follow"
-			android:layout_margin="5px" />
-		<Button 
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" 
-			android:layout_gravity="bottom|right"
-			android:id="@+id/btnDdn" 
-			android:background="@drawable/ddn"
-			android:layout_margin="5px" />
+			android:layout_marginRight="5px"
+			android:layout_marginLeft="5px" />
 	</LinearLayout>
 
 </FrameLayout>

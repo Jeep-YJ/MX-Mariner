@@ -13,6 +13,7 @@ import org.osmdroid.ResourceProxy;
 import org.osmdroid.tileprovider.MapTileProviderArray;
 import org.osmdroid.tileprovider.modules.GEMFFileArchive;
 import org.osmdroid.tileprovider.modules.IArchiveFile;
+import org.osmdroid.tileprovider.modules.MapTileFileArchiveProvider;
 import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
@@ -41,6 +42,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 public class MapActivity extends Activity {
@@ -72,7 +74,11 @@ public class MapActivity extends Activity {
 	private int start_lon; //geopoint
 	private int start_zoom;
 	private String region;
+	private String regiondir = Environment.getExternalStorageDirectory()+"/mxmariner/";
 	private ChartOutlines chartOutlines = new ChartOutlines();
+	private Button btnZoomIn;
+	private Button btnZoomOut;
+	private Button btnFollow;
 	
 	//====================
     // Methods
@@ -81,6 +87,7 @@ public class MapActivity extends Activity {
 	void SetPreferences(SharedPreferences preferences)
 	{
 		prefs = preferences;
+		//TODO:
 		start_lat = prefs.getInt("Latitude", 0);
 		start_lon = prefs.getInt("Longitude", 0);
 		start_zoom = prefs.getInt("Zoom", 3);
@@ -134,47 +141,6 @@ public class MapActivity extends Activity {
 				mLocationOverlay.enableFollowLocation();
 		}
 	};
-	
-	private View.OnClickListener DayDustNightListener = new View.OnClickListener() 
-	{
-		@Override
-		public void onClick(View v)
-		{
-			dayDuskNight ++;
-			if (dayDuskNight>=3)
-				dayDuskNight = 0;
-			
-			setBrightMode(dayDuskNight);
-		}
-	};
-	
-	private void setBrightMode(int level) {
-		FrameLayout ddnMask = (FrameLayout) findViewById(R.id.ddnMask);
-		WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
-		switch (level) {
-			case 0:
-				ddnMask.setBackgroundResource(R.color.day);
-		    	layoutParams.screenBrightness = (float) 1.0;
-		    	getWindow().setAttributes(layoutParams);
-		    	//Toast.makeText(this, "Day Mode", Toast.LENGTH_SHORT).show();
-		    	break;
-		    	
-			case 1:
-				ddnMask.setBackgroundResource(R.color.day);
-		    	layoutParams.screenBrightness = (float) 0.1;
-		    	getWindow().setAttributes(layoutParams);
-		    	//Toast.makeText(this, "Dusk Mode", Toast.LENGTH_SHORT).show();
-		    	break;
-		    	
-			case 2:
-				ddnMask.setBackgroundResource(R.color.night);
-		    	layoutParams.screenBrightness = (float) 0.01;
-		    	getWindow().setAttributes(layoutParams);
-		    	//Toast.makeText(this, "Night Mode", Toast.LENGTH_SHORT).show();
-		    	break;
-		}
-		
-	}
 		
 	private void ShowAbout()
 	{
@@ -217,7 +183,7 @@ public class MapActivity extends Activity {
     		myArchives[0] = GEMFFileArchive.getGEMFFileArchive(location);
     		mBitmapTileSourceBase = new MxmBitmapTileSourceBase("test", null, minZoom, maxZoom, 256, ".png");    		
     		//myProviders = new MapTileModuleProviderBase[1];
-    		myProviders[0] = new MxmMapTileFileArchiveProvider(new SimpleRegisterReceiver(getApplicationContext()), mBitmapTileSourceBase, myArchives);
+    		myProviders[0] = new MapTileFileArchiveProvider(new SimpleRegisterReceiver(getApplicationContext()), mBitmapTileSourceBase, myArchives);
     		myGemfTileProvider = new MapTileProviderArray(mBitmapTileSourceBase, null, myProviders);
     		myGemfOverlay = new TilesOverlay(myGemfTileProvider, getApplicationContext());
     		myGemfOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
@@ -228,6 +194,42 @@ public class MapActivity extends Activity {
 			Log.e(tag, e.getMessage());
 		}
     }
+    
+    public void ddnChange()
+	{
+		dayDuskNight ++;
+		if (dayDuskNight>=3)
+			dayDuskNight = 0;
+		
+		setBrightMode(dayDuskNight);
+	}
+    
+    private void setBrightMode(int level) {
+		FrameLayout ddnMask = (FrameLayout) findViewById(R.id.ddnMask);
+		WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
+		switch (level) {
+			case 0:
+				ddnMask.setBackgroundResource(R.color.day);
+		    	layoutParams.screenBrightness = (float) 1.0;
+		    	getWindow().setAttributes(layoutParams);
+		    	break;
+		    	
+			case 1:
+				ddnMask.setBackgroundResource(R.color.day);
+		    	layoutParams.screenBrightness = (float) 0.1;
+		    	getWindow().setAttributes(layoutParams);
+		    	//Toast.makeText(this, "Dusk Mode", Toast.LENGTH_SHORT).show();
+		    	break;
+		    	
+			case 2:
+				ddnMask.setBackgroundResource(R.color.night);
+		    	layoutParams.screenBrightness = (float) 0.01;
+		    	getWindow().setAttributes(layoutParams);
+		    	//Toast.makeText(this, "Night Mode", Toast.LENGTH_SHORT).show();
+		    	break;
+		}
+		
+	}
     
     public void fullexit() {
     	int pid = android.os.Process.myPid();
@@ -270,17 +272,15 @@ public class MapActivity extends Activity {
     	mScaleBarOverlay.setNautical();
     	
     	//buttons
-    	Button btnZoomIn = (Button) findViewById(R.id.btnZoomIn);
-        Button btnZoomOut = (Button) findViewById(R.id.btnZoomOut);
-        Button btnFollow = (Button) findViewById(R.id.btnFollow);
-        Button btnDdn = (Button) findViewById(R.id.btnDdn);
-        btnZoomIn.setOnClickListener(ZoomInListener);
-        btnZoomOut.setOnClickListener(ZoomOutListener);
+    	btnZoomIn = (Button) findViewById(R.id.btnZoomIn);
+    	btnZoomOut = (Button) findViewById(R.id.btnZoomOut);
+    	btnFollow = (Button) findViewById(R.id.btnFollow);
+		btnZoomIn.setOnClickListener(ZoomInListener);
+		btnZoomOut.setOnClickListener(ZoomOutListener);
         btnFollow.setOnClickListener(FollowListener);
-        btnDdn.setOnClickListener(DayDustNightListener);
 
         //settings
-        mapView.setKeepScreenOn(true);        
+        mapView.setKeepScreenOn(true);
         setBrightMode(dayDuskNight);
     }
     
@@ -288,43 +288,80 @@ public class MapActivity extends Activity {
 	public void onPause() {
     	StorePreferences();
     	mapView.getOverlays().clear();
-    	myProviders[0].detach();
     	super.onPause();
     }
     
     @Override
 	public void onResume() {
-        region = Environment.getExternalStorageDirectory()+"/mxmariner/" + prefs.getString("PrefChartLocation", "");
-        gemfOverlay(region);
+    	region = prefs.getString("PrefChartLocation", "None");
+    	gemfOverlay(regiondir + region);
+    	Toast.makeText(getApplicationContext(), "Using chart region: "+region, Toast.LENGTH_SHORT).show();
         
         //chart outlines
         chartOutlines.clearPaths();
-        Toast.makeText(getApplicationContext(), region, Toast.LENGTH_LONG).show();
-        File dbf = new File(region+".s3db");
-        if (dbf.isFile()) {
-        	DataStore datastore = new DataStore(region+".s3db");
-            for (String coordinates : datastore.getOutlines()){
-            	chartOutlines.addPathOverlay(Color.rgb(219, 73, 150), mResourceProxy, coordinates);
+        if (prefs.getBoolean("OutlinePref", true)){
+        	File dbf = new File(regiondir+region+".s3db");
+            if (dbf.isFile()) {
+            	DataStore datastore = new DataStore(regiondir+region+".s3db");
+                for (String coordinates : datastore.getOutlines()){
+                	chartOutlines.addPathOverlay(Color.rgb(219, 73, 150), mResourceProxy, coordinates);
+                }
+                datastore.Close();
             }
-            datastore.Close();
-        }
-    	
-    	for (Object path : chartOutlines.getPaths())
-        	mapView.getOverlays().add((Overlay) path);
-    			
-    	mapView.getOverlays().add(mLocationOverlay);
-    	mapView.getOverlays().add(mScaleBarOverlay);
-    	super.onResume();
+        	for (Object path : chartOutlines.getPaths())
+            	mapView.getOverlays().add((Overlay) path);
+       }
+       
+       LinearLayout llb = (LinearLayout) this.findViewById(R.id.linearLayout_buttons);
+       llb.removeView(btnZoomIn);
+       llb.removeView(btnZoomOut);
+       llb.removeView(btnFollow);
+       if (prefs.getBoolean("ZoomBtnPref", true)) {
+    	   llb.addView(btnZoomIn);
+    	   llb.addView(btnZoomOut);
+    	   llb.addView(btnFollow);
+       } else
+    	   llb.addView(btnFollow);
+       
+//       if (prefs.getBoolean("ZoomBtnPref", true)) {
+//    	   btnZoomIn.setVisibility(View.INVISIBLE);
+//    	   btnZoomOut.setVisibility(View.INVISIBLE);
+//       } else {
+//    	   btnZoomIn.setVisibility(View.VISIBLE);
+//    	   btnZoomOut.setVisibility(View.VISIBLE);
+//       }
+        
+       //vessel and scalebar
+       mapView.getOverlays().add(mLocationOverlay);
+       mapView.getOverlays().add(mScaleBarOverlay);
+       super.onResume();
     }
     
     //android menu button
     @Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
+	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.options_menu, menu);
 		return true;
 	}
+    
+    //android menu button dynamic changes
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+		MenuItem item = (MenuItem) menu.findItem(R.id.ddn);
+		switch (dayDuskNight) {
+		case 0:
+	    	item.setTitle("Dusk Mode");
+	    	break;	
+		case 1:
+	    	item.setTitle("Night Mode");
+	    	break;	
+		case 2:
+	    	item.setTitle("Day Mode");
+	    	break;
+		}
+		return true;
+    }
     
     //andriod menu button items
     @Override
@@ -332,9 +369,20 @@ public class MapActivity extends Activity {
 	{
 		switch (item.getItemId()) 
 		{
+			case R.id.ddn:
+				Log.d(tag, "Changine brightness mode");
+				ddnChange();
+				return true;
+				
 			case R.id.settings:
 				Log.d(tag, "Showing Settings");
+				//startActivity(new Intent(this, RegionActivity.class));
 				startActivity(new Intent(this, SettingsDialog.class));
+				return true;
+				
+			case R.id.about:
+				Log.d(tag, "Showing about dialog");
+				ShowAbout();
 				return true;
 			
 			case R.id.quit:
@@ -343,11 +391,6 @@ public class MapActivity extends Activity {
 				fullexit();
 				return true;
 				
-			case R.id.about:
-				Log.d(tag, "Showing about dialog");
-				ShowAbout();
-				return true;
-
 			default:
 				return super.onOptionsItemSelected(item);
 		}

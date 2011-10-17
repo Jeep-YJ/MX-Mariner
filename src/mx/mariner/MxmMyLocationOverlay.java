@@ -53,6 +53,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  *
@@ -410,8 +411,10 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
 	@Override
 	public boolean onTouchEvent(final MotionEvent event, final MapView mapView) {
 		if (event.getAction() == MotionEvent.ACTION_MOVE) {
-			disableFollowLocation();
-			btnFollow.setVisibility(View.VISIBLE);
+			if ( mFollow ) {
+				disableFollowLocation();
+				btnFollow.setVisibility(View.VISIBLE);
+			}			
 		}
 
 		return super.onTouchEvent(event, mapView);
@@ -531,6 +534,7 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
 	public void enableFollowLocation() {
 		mFollow = true;
 		btnFollow.setVisibility(View.GONE);
+		Toast.makeText(thisActivity, "GPS follow mode is ON.", Toast.LENGTH_SHORT).show();
 
 		// set initial location when enabled
 		if (isMyLocationEnabled()) {
@@ -551,6 +555,7 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
 	 */
 	public void disableFollowLocation() {
 		mFollow = false;
+		Toast.makeText(thisActivity, "GPS follow mode is OFF.", Toast.LENGTH_SHORT).show();
 		btnFollow.setVisibility(View.VISIBLE);
 	}
 
