@@ -30,6 +30,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
@@ -282,6 +283,17 @@ public class MapActivity extends Activity {
         //settings
         mapView.setKeepScreenOn(true);
         setBrightMode(dayDuskNight);
+        
+        //set configuration for onConfigurationchanged
+        Configuration config = getResources().getConfiguration();
+        int orientation = config.orientation;
+        setRequestedOrientation(orientation);
+    }
+    
+    @Override
+    public void onConfigurationChanged (Configuration newConfig) {
+    	//locks screen orientation
+    	//android:configChanges="orientation" in Manifest
     }
     
     @Override
@@ -302,7 +314,7 @@ public class MapActivity extends Activity {
         if (prefs.getBoolean("OutlinePref", true)){
         	File dbf = new File(regiondir+region+".s3db");
             if (dbf.isFile()) {
-            	DataStore datastore = new DataStore(regiondir+region+".s3db");
+            	ChartSdDataStore datastore = new ChartSdDataStore(regiondir+region+".s3db");
                 for (String coordinates : datastore.getOutlines()){
                 	chartOutlines.addPathOverlay(Color.rgb(219, 73, 150), mResourceProxy, coordinates);
                 }
