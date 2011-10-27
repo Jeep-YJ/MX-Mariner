@@ -9,7 +9,7 @@
  		android:layout_gravity="left"
  		android:layout_width="wrap_content"
  		android:layout_height="wrap_content"
- 		android:src="@drawable/region01">
+ 		android:src="@drawable/region02">
  	</ImageView>
 	<LinearLayout
 		xmlns:android="http://schemas.android.com/apk/res/android"
@@ -19,7 +19,7 @@
 		android:layout_gravity="center">
 	 	<TextView 
 	 		android:id="@+id/regionname"
-	 		android:text="NOAA_BSB_REGION_01"
+	 		android:text="REGION_02"
 	 		android:textSize="20dip"
 	 		android:paddingLeft="10dip"
 	 		android:layout_weight="0.5"
@@ -29,11 +29,35 @@
 	 	</TextView>
 	 	<TextView 
 	 		android:id="@+id/regiondesc"
-	 		android:text="US East, New Jersey to Maine"
+	 		android:text="Block Island, RI to the Canadian Border"
 	 		android:paddingLeft="10dip"
+	 		android:layout_weight="0.5"
 	 		android:layout_gravity="center"
 	 		android:layout_width="wrap_content"
 	 		android:layout_height="wrap_content">
 	 	</TextView>
+	 	<RelativeLayout
+			xmlns:android="http://schemas.android.com/apk/res/android"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content">
+		 	<TextView 
+		 		android:id="@+id/regionsize"
+		 		android:text="xxxMB"
+		 		android:paddingLeft="10dip"
+		 		android:layout_gravity="left"
+		 		android:layout_alignParentLeft="true"
+		 		android:layout_width="wrap_content"
+		 		android:layout_height="wrap_content">
+		 	</TextView>>
+		 	<TextView 
+		 		android:id="@+id/regionstatus"
+		 		android:text="not installed"
+		 		android:paddingRight="10dip"
+		 		android:layout_gravity="right"
+		 		android:layout_alignParentRight="true"
+		 		android:layout_width="wrap_content"
+		 		android:layout_height="wrap_content">
+		 	</TextView>
+	 	</RelativeLayout>
 	 </LinearLayout>
  </LinearLayout>

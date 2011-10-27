@@ -1,21 +1,21 @@
 package mx.mariner;
 
 public class Region {
+	protected String icon;
 	protected String name;
-	protected String description;
-	protected int iconResourceId;
-	
-	protected Region() {
+	protected String desc;
+	protected int bytes;
+	protected String status;
+
+	public Region() {
 	}
 	
-	protected Region(String name, String description, int iconResourceId) {
+	public Region(String icon, String name, String desc, int bytes, String status) {
+		this.icon = icon;
 		this.name = name;
-		this.description = description;
-		this.iconResourceId = iconResourceId;
-	}
-	
-	protected String getName() {
-		return this.name;
+		this.desc = desc;
+		this.bytes = bytes;
+		this.status = status;
 	}
 	
 }

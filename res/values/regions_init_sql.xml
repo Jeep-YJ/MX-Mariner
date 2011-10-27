@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="sql_regions_init">
+CREATE TABLE regions ( 
+    name          TEXT,
+    description   TEXT,
+    image         TEXT,
+    size          INT,
+    installeddate INT,
+    latestdate    INT 
+);
+CREATE TABLE charts ( 
+    region  TEXT,
+    file    TEXT,
+    name    TEXT,
+    updated TEXT,
+    scale   INT,
+    outline TEXT,
+    depths  TEXT 
+);
+	</string>
+	
+	<!-- initial values when db is created -->
+    <string-array name="region_names">
+		<item>REGION_02</item><item>REGION_03</item>
+		<item>REGION_04</item><item>REGION_06</item>
+		<item>REGION_07</item><item>REGION_08</item>
+		<item>REGION_10</item><item>REGION_12</item>
+		<item>REGION_13</item><item>REGION_14</item>
+		<item>REGION_15</item><item>REGION_17</item>
+		<item>REGION_22</item><item>REGION_24</item>
+		<item>REGION_26</item><item>REGION_30</item>
+		<item>REGION_32</item><item>REGION_34</item>
+		<item>REGION_36</item><item>REGION_40</item>
+    </string-array>
+    
+    <string-array name="region_icons">
+		<item>region02</item><item>region03</item>
+		<item>region04</item><item>region06</item>
+		<item>region07</item><item>region08</item>
+		<item>region10</item><item>region12</item>
+		<item>region13</item><item>region14</item>
+		<item>region15</item><item>region17</item>
+		<item>region22</item><item>region24</item>
+		<item>region26</item><item>region30</item>
+		<item>region32</item><item>region34</item>
+		<item>region36</item><item>region40</item>
+     </string-array>
+	
+	<!-- initial values when db is created -->
+    <string-array name="region_descriptions">
+		<item>Block Island RI to the Canadian Border</item><item>New York to Nantucket and Cape May NJ</item>
+		<item>Chesapeake and Delaware Bays</item><item>Norfolk VA to Florida including the ICW</item>
+		<item>Florida East Coast and the Keys</item><item>Florida West Coast and the Keys</item>
+		<item>Puerto Rico and the U.S. Virgin Islands</item><item>Southern California: Point Arena to the Mexican Border</item>
+		<item>Lake Michigan</item><item>San Francisco to Cape Flattery</item>
+		<item>Pacific Northwest: Puget Sound to the Canadian Border</item><item>Mobile AL to the Mexican Border</item>
+		<item>Lake Superior and Lake Huron (U.S. Waters)</item><item>Lake Erie (U.S. Waters)</item>
+		<item>Lake Ontario (U.S. Waters)</item><item>Southeast Alaska</item>
+		<item>South Central Alaska: Yakutat to Kodiak</item><item>Alaska: The Aleutians and Bristol Bay</item>
+		<item>Alaska: Norton Sound to Beaufort Sea</item><item>Hawaiian Islands and U.S. Territories</item>
+    </string-array>
+    
+    <!-- initial values when db is created -->
+    <integer-array name="region_bytes">
+		<item>335040809</item><item>352189755</item>
+		<item>210457599</item><item>194896124</item>
+		<item>139207403</item><item>178985536</item>
+		<item>56571044</item><item>173620909</item>
+		<item>157710332</item><item>301922086</item>
+		<item>167987909</item><item>212648692</item>
+		<item>223333826</item><item>144949454</item>
+		<item>137646155</item><item>438130770</item>
+		<item>288710527</item><item>378685468</item>
+		<item>173650054</item><item>136044244</item>
+    </integer-array>
+    
+    <!-- initial values when db is created -->
+    <integer-array name="region_dates"> 
+    	<item>1319160341</item><item>1319160341</item>
+    	<item>1319160341</item><item>1319160341</item>
+    	<item>1319160341</item><item>1319160341</item>
+    	<item>1319160341</item><item>1319160341</item>
+    	<item>1319160341</item><item>1319160341</item>
+    	<item>1319160341</item><item>1319160341</item>
+    	<item>1319160341</item><item>1319160341</item>
+    	<item>1319160341</item><item>1319160341</item>
+    	<item>1319160341</item><item>1319160341</item>
+    	<item>1319160341</item><item>1319160341</item>
+    </integer-array>
+    
+</resources>

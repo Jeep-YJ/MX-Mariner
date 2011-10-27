@@ -3,47 +3,57 @@ package mx.mariner;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
 public class RegionList {
 	
-	private final List<Region> list;
-	private final int count = 9;
+	private List<Region> list;
+	private Cursor cursor;
 	
-	public RegionList() {
+	public RegionList(Context context, SQLiteDatabase manifest) {
 		list = new ArrayList<Region>();
-		list.add( new Region("NOAA_BSB_REGION_01", 
-				"US East, New Jersey to Maine", R.drawable.region01) );
 		
-		list.add( new Region("NOAA_BSB_REGION_05", 
-				"US East, N. Carolina to Delaware", R.drawable.region05) );
+		cursor = manifest.query("regions", null, null, null, null, null, null);
+		cursor.moveToFirst();
 		
-		list.add( new Region("NOAA_BSB_REGION_07", 
-				"US East, Florida to S. Carolina", R.drawable.region07) );
+		/* TABLE regions
+		name          TEXT,
+    	description   TEXT,
+    	image         TEXT,
+    	size          INT,
+    	installeddate INT,
+    	latestdate    INT 
+		*/
 		
-		list.add( new Region("NOAA_BSB_REGION_08", 
-				"US South East, New Mexico to Florida pan handle", R.drawable.region08) );
+		int name = cursor.getColumnIndex("name");
+		int desc = cursor.getColumnIndex("description");
+		int icon = cursor.getColumnIndex("image");
+		int bytes = cursor.getColumnIndex("size");
+		int installeddate = cursor.getColumnIndex("installeddate");
+		int latestdate = cursor.getColumnIndex("latestdate");
 		
-		list.add( new Region("NOAA_BSB_REGION_09", 
-				"US North East, Great Lakes, Minnesota to New York", R.drawable.region09) );
-		
-		list.add( new Region("NOAA_BSB_REGION_11", 
-				"US West, Arizona to California", R.drawable.region11) );
-		
-		list.add( new Region("NOAA_BSB_REGION_13", 
-				"US West, Oregon to Washington", R.drawable.region13) );
-		
-		list.add( new Region("NOAA_BSB_REGION_14", 
-				"US West, Pacific Ocean, Hawaii", R.drawable.region14) );
-		
-		list.add( new Region("NOAA_BSB_REGION_17", 
-				"US West, Pacific Ocean, Alaska", R.drawable.region17) );
+		while (!cursor.isAfterLast()) {
+			list.add( new Region(cursor.getString(icon), cursor.getString(name), cursor.getString(desc), 
+					cursor.getInt(bytes), findStatus(cursor.getInt(installeddate), cursor.getInt(latestdate))) );
+			cursor.moveToNext();
+		}
+		cursor.close();
+	}
+	
+	private String findStatus(int idate, int ldate) {
+		if (idate == 0) {
+			return "not installed";
+		} else if (ldate < idate) {
+			return "update available";
+		} else {
+			return "installed";
+		}
 	}
 	
 	public List<Region> getList() {
 		return list;
-	}
-	
-	public int getCount() {
-		return count;
 	}
 	
 }
