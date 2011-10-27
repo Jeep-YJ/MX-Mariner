@@ -7,6 +7,7 @@ import android.util.Log;
 
 public class RegionDbHelper extends SQLiteOpenHelper {
     private static String DB_NAME = "regions.s3db";
+    private static final String tag = "MXM";
 
     protected Context context;
     
@@ -17,49 +18,51 @@ public class RegionDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-    	createDatabase(db);
+        createDatabase(db);
     }
 
-	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		//Auto-generated method stub
-	}
-	//TODO:
-	//application update path for new chart region additions
-	//drop current database values and re-populate filling overriding bytes and md5sums based on sd-card contents
-	
-	private void createDatabase(SQLiteDatabase db) {
-      String sql = context.getString(R.string.sql_regions_init);
-      db.execSQL(sql);
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        //Auto-generated method stub
+    }
+    
+    private void createDatabase(SQLiteDatabase db) {      
+        String table1 = context.getString(R.string.sql_regions_table);
+        //Log.i(tag, table1);
+        db.execSQL(table1);
+        
+        String table2 = context.getString(R.string.sql_charts_table);
+        //Log.i(tag, table2);
+        db.execSQL(table2);
               
-      //these arrays are all the same length
-      String[] names = context.getResources().getStringArray(R.array.region_names);
-      String[] descs = context.getResources().getStringArray(R.array.region_descriptions);
-      String[] images = context.getResources().getStringArray(R.array.region_icons);
-      int[] dates = context.getResources().getIntArray(R.array.region_dates);
-      int[] bytes = context.getResources().getIntArray(R.array.region_bytes);
-      Log.i("MXM", "initializing region manifest db");
-      
-      /* TABLE regions
-		name          TEXT,
-	  	description   TEXT,
-	  	image         TEXT,
-	  	size          INT,
-	  	installeddate INT,
-	  	latestdate    INT 
-      */
-      
-      for (int i=0; i<names.length; i++) {
-      	sql = "insert into regions values (" + 
-      		   "\'"+names[i]+"\',"+
-      		   "\'"+descs[i]+"\',"+
-      		   "\'"+images[i]+"\',"+
-      		   "\'"+String.valueOf(bytes[i])+"\',"+
-      		   "\'"+"0"+"\',"+
-      		   "\'"+String.valueOf(dates[i])+"\')";
-      	//Log.i("MXM", sql);
-      	db.execSQL(sql);
-      }	
-	}
-	
+        //these arrays are all the same length
+        String[] names = context.getResources().getStringArray(R.array.region_names);
+        String[] descs = context.getResources().getStringArray(R.array.region_descriptions);
+        String[] images = context.getResources().getStringArray(R.array.region_icons);
+        int[] dates = context.getResources().getIntArray(R.array.region_dates);
+        int[] bytes = context.getResources().getIntArray(R.array.region_bytes);
+        Log.i(tag, "initializing region manifest db");
+          
+        /* TABLE regions
+            name          TEXT,
+            description   TEXT,
+            image         TEXT,
+            size          INT,
+            installeddate INT,
+            latestdate    INT 
+        */
+          
+        for (int i=0; i<names.length; i++) {
+            String sql = "insert into regions values (" + 
+                "\'"+names[i]+"\',"+
+                "\'"+descs[i]+"\',"+
+                "\'"+images[i]+"\',"+
+                "\'"+String.valueOf(bytes[i])+"\',"+
+                "\'"+"0"+"\',"+
+                "\'"+String.valueOf(dates[i])+"\')";
+        //Log.i(tag, sql);
+        db.execSQL(sql);
+      }    
+    }
+    
 }

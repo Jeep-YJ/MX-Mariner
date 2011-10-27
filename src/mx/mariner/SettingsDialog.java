@@ -14,35 +14,35 @@ import android.preference.PreferenceActivity;
 
 public class SettingsDialog extends PreferenceActivity 
 {
-	private GemfCollection gemfCollection = new GemfCollection();
-	
-	@Override
-	public void onCreate(Bundle savedInstanceState) 
-	{
-		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(R.xml.preferences);
-		
-		//select chart region
-		ListPreference prefChartLocation = (ListPreference) this.findPreference("PrefChartLocation");
-		String[] entries = gemfCollection.getRegionList();
-		prefChartLocation.setEntries(entries);
-		prefChartLocation.setEntryValues(entries);
-		
-		//get new chart regions
-		Preference chartDownloader = (Preference) this.findPreference("ChartDownloader");
-		chartDownloader.setOnPreferenceClickListener(onChartDlClick);
-		
-	}
-	
-	private OnPreferenceClickListener onChartDlClick = new OnPreferenceClickListener() {
-		public boolean onPreferenceClick(Preference preference) {
-			startActivity(new Intent(getBaseContext(), RegionActivity.class));
-			return true;
-		}
-		
-	};
-	
-	
-	
+    private GemfCollection gemfCollection = new GemfCollection();
+    
+    @Override
+    public void onCreate(Bundle savedInstanceState) 
+    {
+        super.onCreate(savedInstanceState);
+        addPreferencesFromResource(R.xml.preferences);
+        
+        //select chart region
+        ListPreference prefChartLocation = (ListPreference) this.findPreference("PrefChartLocation");
+        String[] entries = gemfCollection.getRegionList();
+        prefChartLocation.setEntries(entries);
+        prefChartLocation.setEntryValues(entries);
+        
+        //get new chart regions
+        Preference chartDownloader = (Preference) this.findPreference("ChartDownloader");
+        chartDownloader.setOnPreferenceClickListener(onChartDlClick);
+        
+    }
+    
+    private OnPreferenceClickListener onChartDlClick = new OnPreferenceClickListener() {
+        public boolean onPreferenceClick(Preference preference) {
+            startActivity(new Intent(getBaseContext(), RegionActivity.class));
+            return true;
+        }
+        
+    };
+    
+    
+    
 
 }

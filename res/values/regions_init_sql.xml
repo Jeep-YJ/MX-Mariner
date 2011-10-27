@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="sql_regions_init">
-CREATE TABLE regions ( 
-    name          TEXT,
-    description   TEXT,
-    image         TEXT,
-    size          INT,
-    installeddate INT,
-    latestdate    INT 
-);
-CREATE TABLE charts ( 
-    region  TEXT,
-    file    TEXT,
-    name    TEXT,
-    updated TEXT,
-    scale   INT,
-    outline TEXT,
-    depths  TEXT 
-);
+    <string name="sql_regions_table">
+		CREATE TABLE regions ( 
+		    name          TEXT,
+		    description   TEXT,
+		    image         TEXT,
+		    size          INT,
+		    installeddate INT,
+		    latestdate    INT );
+	</string>
+	
+	<string name="sql_charts_table">
+		CREATE TABLE charts (
+			region  TEXT, 
+			file    TEXT, 
+			name    TEXT, 
+			updated TEXT, 
+			scale   INT, 
+			outline TEXT, 
+			depths  TEXT );
 	</string>
 	
 	<!-- initial values when db is created -->
