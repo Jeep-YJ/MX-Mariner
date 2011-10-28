@@ -1,3 +1,7 @@
+// Modified by Will Kamp <manimaul!gmail.com>
+// Distributed under the terms of the Simplified BSD Licence.
+// See license.txt for details
+
 package mx.mariner;
 
 import java.util.ArrayList;
@@ -11,11 +15,15 @@ public class RegionList {
     
     private List<Region> list;
     private Cursor cursor;
+    private GemfCollection gemfCollection = new GemfCollection();
+    private String[] gemfs;
+    //private static final String tag = "RegionList";
     
-    public RegionList(Context context, SQLiteDatabase manifest) {
+    public RegionList(Context context, SQLiteDatabase regiondb) {
         list = new ArrayList<Region>();
+        this.gemfs = gemfCollection.getFileList();
         
-        cursor = manifest.query("regions", null, null, null, null, null, null);
+        cursor = regiondb.query("regions", null, null, null, null, null, null);
         cursor.moveToFirst();
         
         /* TABLE regions
@@ -35,21 +43,33 @@ public class RegionList {
         int latestdate = cursor.getColumnIndex("latestdate");
         
         while (!cursor.isAfterLast()) {
-            list.add( new Region(cursor.getString(icon), cursor.getString(name), cursor.getString(desc), 
-                    cursor.getInt(bytes), findStatus(cursor.getInt(installeddate), cursor.getInt(latestdate))) );
+            String regionName = cursor.getString(name);
+            String status = findStatus( cursor.getInt(installeddate), cursor.getInt(latestdate), regionName);
+            list.add( new Region(cursor.getString(icon), regionName, cursor.getString(desc), 
+                    cursor.getInt(bytes), status) );
             cursor.moveToNext();
         }
         cursor.close();
     }
     
-    private String findStatus(int idate, int ldate) {
-        if (idate == 0) {
-            return "not installed";
-        } else if (ldate < idate) {
-            return "update available";
-        } else {
-            return "installed";
+    private String findStatus(int idate, int ldate, String name) {
+        String status = "not installed";
+        Boolean installed = regionInstalled(name);
+        if (installed)
+            status = "installed";
+        if ( installed && (idate==0) )
+            status = "update available";
+        if ( (ldate > idate) && !(installed) && (idate!=0) )
+            status = "update available";
+        return status;
+    }
+    
+    private Boolean regionInstalled(String name) {
+        for (int i=0; i<gemfs.length; i++) {
+            if (gemfs[i].endsWith(name))
+                return true;
         }
+        return false;
     }
     
     public List<Region> getList() {

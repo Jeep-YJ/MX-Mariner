@@ -11,7 +11,6 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.PathOverlay;
 
 import android.graphics.Paint;
-import android.util.Log;
 
 
 public class ChartOutlines {
@@ -47,8 +46,8 @@ public class ChartOutlines {
             String[] ll = coord[i].split(",");
             if (ll.length == 2)
                 path.addPoint(new GeoPoint(Double.parseDouble(ll[0]), Double.parseDouble(ll[1])));
-            else
-                Log.i("MXM", coord[i]);
+//            else
+//                Log.i("MXM", coord[i]);
         }
         
         outlinePathOverlays.add(path);

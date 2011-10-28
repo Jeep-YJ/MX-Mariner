@@ -65,7 +65,6 @@ public final class R {
         public static final int zoomout=0x7f02001d;
     }
     public static final class id {
-        public static final int about=0x7f090012;
         public static final int btnFollow=0x7f09000a;
         public static final int btnZoomIn=0x7f090008;
         public static final int btnZoomOut=0x7f090009;
@@ -76,7 +75,7 @@ public final class R {
         public static final int linearLayout_buttons=0x7f090007;
         public static final int linearLayout_hud=0x7f090002;
         public static final int mapview=0x7f090000;
-        public static final int quit=0x7f090013;
+        public static final int quit=0x7f090012;
         public static final int regiondesc=0x7f09000d;
         public static final int regionicon=0x7f09000b;
         public static final int regionname=0x7f09000c;
@@ -97,11 +96,12 @@ public final class R {
     public static final class string {
         public static final int app_name=0x7f050007;
         public static final int app_version=0x7f050008;
-        public static final int copyright=0x7f05000a;
+        public static final int copyright=0x7f05000b;
+        public static final int credits=0x7f050009;
         public static final int data_path=0x7f050002;
         public static final int http_pass=0x7f050004;
         public static final int http_user=0x7f050003;
-        public static final int nav_warning=0x7f050009;
+        public static final int nav_warning=0x7f05000a;
         public static final int region_url=0x7f050001;
         public static final int sql_charts_table=0x7f050006;
         public static final int sql_regions_table=0x7f050005;

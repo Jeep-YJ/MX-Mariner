@@ -1,3 +1,7 @@
+// Modified by Will Kamp <manimaul!gmail.com>
+// Distributed under the terms of the Simplified BSD Licence.
+// See license.txt for details
+
 package mx.mariner;
 
 import java.util.ArrayList;
@@ -72,7 +76,7 @@ public class RegionArrayAdapter extends ArrayAdapter<Region> {
             }
             case -723658131: //"not installed".hashCode();
             {
-                regionStat.setTextColor(Color.RED);
+                regionStat.setTextColor(Color.BLUE);
                 break;
             }
             case -1709555662: //"update available".hashCode();

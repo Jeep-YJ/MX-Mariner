@@ -8,6 +8,8 @@ import java.util.ArrayList;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
+import android.os.StatFs;
 
 public class ChartDataStore {
     
@@ -16,23 +18,21 @@ public class ChartDataStore {
     //====================
     
     private SQLiteDatabase regiondb;
-    private String region;
     //TODO: use region to only show selected region outlines
     
     //====================
     // Constructors
     //====================
     
-    public ChartDataStore(SQLiteDatabase regiondb, String region) {
+    public ChartDataStore(SQLiteDatabase regiondb) {
         this.regiondb = regiondb;
-        this.region = region;
     }
     
     //====================
     // Methods
     //====================
     
-    public ArrayList<String> getOutlines() {
+    protected ArrayList<String> getOutlines(String region) {
         ArrayList<String> routes = new ArrayList<String>();
         Cursor cursor = regiondb.query("charts", null, "region='"+region+"'", null, null, null, null);
         cursor.moveToFirst();
@@ -43,6 +43,21 @@ public class ChartDataStore {
         }
         cursor.close();
         return routes;
+    }
+    
+    protected int GetRegionBytes(String region) {
+        Cursor cursor = regiondb.query("regions", null, "name='"+region+"'", null, null, null, null);
+        cursor.moveToFirst();
+        int column = cursor.getColumnIndex("size");
+        int bytes = cursor.getInt(column);
+        cursor.close();
+        return bytes;
+    }
+    
+    protected int SdAvailableBytes() {
+        StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+        double availableBytes = (double)stat.getAvailableBlocks() *(double)stat.getBlockSize();
+        return (int) availableBytes;
     }
     
 }

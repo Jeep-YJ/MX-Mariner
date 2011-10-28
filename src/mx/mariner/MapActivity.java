@@ -26,8 +26,6 @@ import org.osmdroid.views.overlay.ScaleBarOverlay;
 import org.osmdroid.views.overlay.TilesOverlay;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -86,8 +84,7 @@ public class MapActivity extends Activity {
     // Methods
     //====================
     
-    void SetPreferences(SharedPreferences preferences)
-    {
+    void SetPreferences(SharedPreferences preferences) {
         prefs = preferences;
         //TODO:
         start_lat = prefs.getInt("Latitude", 0);
@@ -97,8 +94,7 @@ public class MapActivity extends Activity {
         //region overlay set in onResume
     }
     
-    void StorePreferences()
-    {
+    void StorePreferences() {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt("Latitude", mapView.getMapCenter().getLatitudeE6());
         editor.putInt("Longitude", mapView.getMapCenter().getLongitudeE6());
@@ -107,11 +103,9 @@ public class MapActivity extends Activity {
         editor.commit();
     }
 
-    private View.OnClickListener ZoomInListener = new View.OnClickListener()
-    {
+    private View.OnClickListener ZoomInListener = new View.OnClickListener() {
         @Override
-        public void onClick(View v)
-        {
+        public void onClick(View v) {
             //is there a better way?...zoom during follow is screwed up otherwise
             if (mLocationOverlay.isFollowLocationEnabled()) {
                 mLocationOverlay.disableFollowLocation();
@@ -120,8 +114,8 @@ public class MapActivity extends Activity {
                 mapController.zoomIn();
         }
     };
-    private View.OnClickListener ZoomOutListener = new View.OnClickListener()
-    {
+    
+    private View.OnClickListener ZoomOutListener = new View.OnClickListener() {
         @Override
         public void onClick(View v)
         {
@@ -134,8 +128,7 @@ public class MapActivity extends Activity {
         }
     };
     
-    private View.OnClickListener FollowListener = new View.OnClickListener()
-    {
+    private View.OnClickListener FollowListener = new View.OnClickListener() {
         @Override
         public void onClick(View v)
         {
@@ -143,35 +136,6 @@ public class MapActivity extends Activity {
                 mLocationOverlay.enableFollowLocation();
         }
     };
-        
-    private void ShowAbout()
-    {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("About MX Mariner");
-        builder.setIcon(R.drawable.icon);
-        builder.setMessage("Website:\n" +
-                           "MXMariner.com\n\n" +
-                           "Credits:\n" +
-                           "Lead Developer - Will Kamp\n" +
-                           "MatrixMariner.com - manimaul@gmail.com\n\n" +
-                           "Special Thanks:\n" +
-                           "OSMDroid - Nicolas Gramlich\n" +
-                           "OpenCPN - Dave Register\n" +
-                           "GDAL - Frank Warmerdam\n" +
-                           "GDAL Tiler - Klokan Petr Přidal\n" +
-                           "Tiler-Tools - Vadim Shlyakhov\n" +
-                           "GEMF - Allen Budden\n");
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
-        {
-            @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
-                return;
-            }
-        }); 
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
     
     private void gemfOverlay(String gemfLocation) {
         File location = new File(gemfLocation+".gemf");
@@ -197,8 +161,7 @@ public class MapActivity extends Activity {
         }
     }
     
-    public void ddnChange()
-    {
+    public void ddnChange() {
         dayDuskNight ++;
         if (dayDuskNight>=3)
             dayDuskNight = 0;
@@ -306,8 +269,7 @@ public class MapActivity extends Activity {
     
     @Override
     public void onResume() {
-        //region = prefs.getString("PrefChartLocation", "None");
-        region = "REGION_02";
+        region = prefs.getString("PrefChartLocation", "None");
         gemfOverlay(regiondir + region);
         Toast.makeText(getApplicationContext(), "Using chart region: "+region, Toast.LENGTH_SHORT).show();
         
@@ -316,9 +278,9 @@ public class MapActivity extends Activity {
         if (prefs.getBoolean("OutlinePref", true)){
             
             SQLiteDatabase regiondb = (new RegionDbHelper(this)).getReadableDatabase();
-            ChartDataStore datastore = new ChartDataStore(regiondb, region);
-            for (String coordinates : datastore.getOutlines()){
-                Log.i(tag, coordinates);
+            ChartDataStore datastore = new ChartDataStore(regiondb);
+            for (String coordinates : datastore.getOutlines(region)){
+                //Log.i(tag, coordinates);
                 chartOutlines.addPathOverlay(Color.rgb(219, 73, 150), mResourceProxy, coordinates);
             }
             regiondb.close();
@@ -380,8 +342,7 @@ public class MapActivity extends Activity {
     
     //andriod menu button items
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) 
-    {
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) 
         {
             case R.id.ddn:
@@ -391,14 +352,15 @@ public class MapActivity extends Activity {
                 
             case R.id.settings:
                 Log.d(tag, "Showing Settings");
-                //startActivity(new Intent(this, RegionActivity.class));
+                SQLiteDatabase regiondb = (new RegionDbHelper(this)).getWritableDatabase();
+                new RegionUpdateCheck(regiondb, this).execute();
                 startActivity(new Intent(this, SettingsDialog.class));
                 return true;
                 
-            case R.id.about:
-                Log.d(tag, "Showing about dialog");
-                ShowAbout();
-                return true;
+//            case R.id.about:
+//                Log.d(tag, "Showing about dialog");
+//                ShowAbout();
+//                return true;
             
             case R.id.quit:
                 Log.d(tag, "Finishing");

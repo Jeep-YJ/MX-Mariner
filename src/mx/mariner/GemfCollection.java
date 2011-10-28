@@ -8,8 +8,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
 
 import org.osmdroid.util.GEMFFile;
 
@@ -31,8 +29,8 @@ public class GemfCollection {
     
     private String gemfDir;
     private String[] gemfList;
-    private String[] s3dbList;
-    private String[] regionList;
+    //private String[] s3dbList;
+    //private String[] regionList;
     private File fGemfDir;
     private int minZoom = 100;
     private int maxZoom = 0;
@@ -59,12 +57,12 @@ public class GemfCollection {
     // Methods
     //====================
     
-    private static String[] lstUnion(String[] arg0, String[] arg1) {
-        HashSet<String> diff = new HashSet<String>(Arrays.asList(arg0));
-        diff.retainAll(Arrays.asList(arg1));
-        String[] a = new String[diff.size()];
-        return diff.toArray(a);
-    }
+//    private static String[] lstUnion(String[] arg0, String[] arg1) {
+//        HashSet<String> diff = new HashSet<String>(Arrays.asList(arg0));
+//        diff.retainAll(Arrays.asList(arg1));
+//        String[] a = new String[diff.size()];
+//        return diff.toArray(a);
+//    }
     
     private String[] filenameFilter(final String extention) {
         //filter directory files
@@ -98,10 +96,10 @@ public class GemfCollection {
         gemfList = filenameFilter(".gemf");
         
         //get list of files ending in .s3db
-        s3dbList = filenameFilter(".s3db");
+        //s3dbList = filenameFilter(".s3db");
         
         //make sure .gemf has corresponding .s3db file
-        regionList = lstUnion(gemfList, s3dbList);
+        //regionList = lstUnion(gemfList, s3dbList);
     }
     
     private void setZoomLevels() {
@@ -146,9 +144,9 @@ public class GemfCollection {
         return gemfList;
     }
     
-    public String[] getRegionList() {
-        return regionList;
-    }
+//    public String[] getRegionList() {
+//        return regionList;
+//    }
     
     public String getDir() {
         return gemfDir;

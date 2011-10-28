@@ -22,19 +22,34 @@
 		android:title="Charts"
 		android:key="ChartRegions">
 		  <ListPreference
-		  	android:summary="Select which marine chart region file to use."
-		  	android:title="Select Chart Region"
+		  	android:summary="Select which chart region to use."
+		  	android:title="Select Current Chart Region"
 		  	android:key="PrefChartLocation">
 		  </ListPreference>
 		  <Preference
-		  	android:summary="Download new NOAA BSB chart regions from the internet."
-		  	android:title="Get New Chart Regions"
+		  	android:summary="Download new NOAA raster chart regions"
+		  	android:title="Get new US chart regions"
 		  	android:key="ChartDownloader">
-		  </Preference>		  
+		  </Preference>
+<!-- 		  <Preference -->
+<!--             android:summary="Download new LINZ raster chart regions" -->
+<!--             android:title="Get new New Zealand chart regions" -->
+<!--             android:key="NzChartDownloader"> -->
+<!--           </Preference> 	   -->
 	</PreferenceScreen>
 	<Preference
-  		android:summary="Information about MX Mariner"
-  		android:title="Info"
-  		android:key="MxmInfo">
+        android:summary="Information about MX Mariner and credits"
+        android:title="About"
+        android:key="About">
+    </Preference>
+	<Preference
+  		android:summary="Warning about using MX Mariner"
+  		android:title="Warning"
+  		android:key="Warning">
  	</Preference>
+ 	<Preference
+      android:summary="MX Mariner license information"
+      android:title="License"
+      android:key="License">
+    </Preference> 
 </PreferenceScreen>

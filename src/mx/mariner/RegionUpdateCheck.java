@@ -1,18 +1,23 @@
+// Modified by Will Kamp <manimaul!gmail.com>
+// Distributed under the terms of the Simplified BSD Licence.
+// See license.txt for details
+
 package mx.mariner;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
-
-import org.apache.http.util.ByteArrayBuffer;
+import java.util.ArrayList;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -42,18 +47,27 @@ public class RegionUpdateCheck extends AsyncTask<String, Integer, String> {
     protected String doInBackground(String... params) {
         getFileFromUrl(FILEPATH, URL);
         try {
-            String sql = readFileAsString(FILEPATH);
-            //Log.i("MXM", sql);
-            regiondb.execSQL(sql);
+            ArrayList<String> sql = readLines(FILEPATH);
+            Log.i("MXM", "updating region sql data");
+            for (String line:sql)
+                regiondb.execSQL(line);
+                    
+            File file = new File(FILEPATH);
+            if (file.delete())
+                Log.i(tag, "deleted file:"+FILEPATH);
+            
         } catch (IOException e) {
             Log.e("MXM", e.getMessage());
         }
         return null;
     }
     
-    protected void getFileFromUrl(String filePath, String urlString) {
+    protected void onPostExecute(String result){
+        regiondb.close();
+    }
+    
+    private boolean getFileFromUrl(String filePath, String urlString) {
         try {
-            File file = new File(filePath);
             long startTime = System.currentTimeMillis();
             URL url = new URL(urlString);
             Log.i(tag, "Downloading: "+url);
@@ -71,25 +85,30 @@ public class RegionUpdateCheck extends AsyncTask<String, Integer, String> {
                 }
             });
 
-            int size = conn.getContentLength();
             conn.connect();
-            
-            
             Log.i(tag, "Http Response code: "+String.valueOf(conn.getResponseCode()));
             Log.i(tag, "Http Response msg: "+conn.getResponseMessage());
             
-            InputStream inputStream = conn.getInputStream();
-            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-            ByteArrayBuffer byteArrayBuffer = new ByteArrayBuffer(50);
-            int currentByte = 0;
+            int size = conn.getContentLength();
+            int count = 0;
+            Log.i(tag, "File bytes: "+String.valueOf(size));
             
-            while ((currentByte = bufferedInputStream.read()) != -1) {
-                byteArrayBuffer.append((byte) currentByte);
+            InputStream input = new BufferedInputStream(url.openStream());
+            OutputStream output = new FileOutputStream(filePath);
+            byte data[] = new byte[1024];
+
+            long total = 0;
+
+            while ((count = input.read(data)) != -1) {
+                total += count;
+                publishProgress((int)(total*100/size));
+                output.write(data, 0, count);
             }
-            
-            FileOutputStream fos = new FileOutputStream(file);
-            fos.write(byteArrayBuffer.toByteArray());
-            fos.close();
+
+            output.flush();
+            output.close();
+            input.close();
+
             Log.i(tag, "Downloaded "
                     + String.valueOf(size)
                     + " bytes in "
@@ -98,21 +117,25 @@ public class RegionUpdateCheck extends AsyncTask<String, Integer, String> {
             
         } catch (MalformedURLException e) {
             Log.e(tag, e.getMessage());
+            return false;
         } catch (IOException e) {
             Log.e(tag, e.getMessage());
+            return false;
         }
+        
+        return true;
     }
     
-    protected String readFileAsString(String filePath) throws java.io.IOException{
-        byte[] buffer = new byte[(int) new File(filePath).length()];
-        BufferedInputStream f = null;
-        try {
-            f = new BufferedInputStream(new FileInputStream(filePath));
-            f.read(buffer);
-        } finally {
-            if (f != null) try { f.close(); } catch (IOException ignored) { }
+    public ArrayList<String> readLines(String filePath) throws IOException {
+        FileReader fileReader = new FileReader(filePath);
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+        ArrayList<String> lines = new ArrayList<String>();
+        String line = null;
+        while ((line = bufferedReader.readLine()) != null) {
+            lines.add(line);
         }
-        return new String(buffer);
+        bufferedReader.close();
+        return lines;
     }
 
 }
