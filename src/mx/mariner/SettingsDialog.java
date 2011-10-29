@@ -14,19 +14,19 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 
-public class SettingsDialog extends PreferenceActivity 
-{
-    private GemfCollection gemfCollection;
+public class SettingsDialog extends PreferenceActivity {
+    
+    ListPreference prefChartLocation;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        gemfCollection = new GemfCollection();
         addPreferencesFromResource(R.xml.preferences);
         
         //select chart region
-        ListPreference prefChartLocation = (ListPreference) this.findPreference("PrefChartLocation");
-        String[] entries = gemfCollection.getFileList();
+        prefChartLocation = (ListPreference) this.findPreference("PrefChartLocation");
+        
+        String[] entries = new GemfCollection().getFileList();
         prefChartLocation.setEntries(entries);
         prefChartLocation.setEntryValues(entries);
         
@@ -65,13 +65,11 @@ public class SettingsDialog extends PreferenceActivity
         
     }
     
-    public void OnResume() {
-        ListPreference prefChartLocation = (ListPreference) this.findPreference("PrefChartLocation");
-        gemfCollection = new GemfCollection();
-        String[] entries = gemfCollection.getFileList();
+    public void onRestart() {
+        super.onRestart();
+        String[] entries = new GemfCollection().getFileList();
         prefChartLocation.setEntries(entries);
         prefChartLocation.setEntryValues(entries);
-        super.onResume();
     }
     
     private void ShowAbout() {

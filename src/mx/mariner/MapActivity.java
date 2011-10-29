@@ -86,7 +86,6 @@ public class MapActivity extends Activity {
     
     void SetPreferences(SharedPreferences preferences) {
         prefs = preferences;
-        //TODO:
         start_lat = prefs.getInt("Latitude", 0);
         start_lon = prefs.getInt("Longitude", 0);
         start_zoom = prefs.getInt("Zoom", 3);
@@ -252,6 +251,23 @@ public class MapActivity extends Activity {
         Configuration config = getResources().getConfiguration();
         int orientation = config.orientation;
         setRequestedOrientation(orientation);
+        
+        //TODO: this needs to be moved to an async task with progress bar
+        //look for gemf files that have installeddate of 0 in database
+        //execute cached sql/dat for missing files if it exists
+        SQLiteDatabase regiondb = (new RegionDbHelper(this)).getWritableDatabase();
+        String[] zeroDate = new ChartDataStore(regiondb).GetUninstalledRegions();
+        GemfCollection gemfCollection = new GemfCollection();
+        String[] missing = GemfCollection.lstUnion(gemfCollection.getRegionList(), zeroDate);
+        for (int i=0; i<missing.length; i++) {
+            try {
+                for (String line:ReadFile.readLines(missing[i]))
+                    regiondb.execSQL(line);
+            } catch (IOException e) {
+                Log.e(tag, e.getMessage());
+            }  
+        }
+        regiondb.close();
     }
     
     @Override
@@ -281,7 +297,8 @@ public class MapActivity extends Activity {
             ChartDataStore datastore = new ChartDataStore(regiondb);
             for (String coordinates : datastore.getOutlines(region)){
                 //Log.i(tag, coordinates);
-                chartOutlines.addPathOverlay(Color.rgb(219, 73, 150), mResourceProxy, coordinates);
+                //pink noaa chart color Color.rgb(219, 73, 150)
+                chartOutlines.addPathOverlay(Color.rgb(69, 172, 137), mResourceProxy, coordinates);
             }
             regiondb.close();
             
@@ -356,11 +373,6 @@ public class MapActivity extends Activity {
                 new RegionUpdateCheck(regiondb, this).execute();
                 startActivity(new Intent(this, SettingsDialog.class));
                 return true;
-                
-//            case R.id.about:
-//                Log.d(tag, "Showing about dialog");
-//                ShowAbout();
-//                return true;
             
             case R.id.quit:
                 Log.d(tag, "Finishing");

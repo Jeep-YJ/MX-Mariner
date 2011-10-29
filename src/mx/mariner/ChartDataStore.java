@@ -26,6 +26,7 @@ public class ChartDataStore {
     
     public ChartDataStore(SQLiteDatabase regiondb) {
         this.regiondb = regiondb;
+        
     }
     
     //====================
@@ -58,6 +59,19 @@ public class ChartDataStore {
         StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
         double availableBytes = (double)stat.getAvailableBlocks() *(double)stat.getBlockSize();
         return (int) availableBytes;
+    }
+    
+    protected String[] GetUninstalledRegions() {
+        ArrayList<String> uninstalled = new ArrayList<String>();
+        Cursor cursor = regiondb.query("regions", null, "installeddate=0", null, null, null, null);
+        int column = cursor.getColumnIndex("name");
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            uninstalled.add(cursor.getString(column));
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return (String[]) uninstalled.toArray();
     }
     
 }

@@ -5,10 +5,8 @@
 package mx.mariner;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -47,7 +45,7 @@ public class RegionUpdateCheck extends AsyncTask<String, Integer, String> {
     protected String doInBackground(String... params) {
         getFileFromUrl(FILEPATH, URL);
         try {
-            ArrayList<String> sql = readLines(FILEPATH);
+            ArrayList<String> sql = ReadFile.readLines(FILEPATH);
             Log.i("MXM", "updating region sql data");
             for (String line:sql)
                 regiondb.execSQL(line);
@@ -124,18 +122,6 @@ public class RegionUpdateCheck extends AsyncTask<String, Integer, String> {
         }
         
         return true;
-    }
-    
-    public ArrayList<String> readLines(String filePath) throws IOException {
-        FileReader fileReader = new FileReader(filePath);
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-        ArrayList<String> lines = new ArrayList<String>();
-        String line = null;
-        while ((line = bufferedReader.readLine()) != null) {
-            lines.add(line);
-        }
-        bufferedReader.close();
-        return lines;
     }
 
 }

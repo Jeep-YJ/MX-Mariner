@@ -5,10 +5,8 @@
 package mx.mariner;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -23,6 +21,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -38,8 +37,11 @@ public class RegionDownload extends AsyncTask<String, Integer, String> {
     private String gemfPartPath;  //where region gemf will be stored during download
     private String gemfFilePath;  //where region gemf will be stored
     private String sqlUrl; //where region sql will be fetched from
-    private String gemfUrl; //where region
+    private String gemfUrl; //where region will be fetched from
+    private String region;
     private Activity parent;
+    
+    private SharedPreferences prefs;
     protected ProgressDialog progressDialog;
     
     private SQLiteDatabase regiondb;
@@ -54,6 +56,7 @@ public class RegionDownload extends AsyncTask<String, Integer, String> {
         this.gemfUrl = context.getString(R.string.region_url)+region+".gemf";
         this.progressDialog = progressDialog;
         this.parent = activity;
+        this.region = region;
         USER = context.getString(R.string.http_user);
         PASS = context.getString(R.string.http_pass);
         
@@ -73,7 +76,7 @@ public class RegionDownload extends AsyncTask<String, Integer, String> {
 
             if (getFileFromUrl(sqlFilePath, sqlUrl, false)) {
                 try {
-                    ArrayList<String> sql = readLines(sqlFilePath);
+                    ArrayList<String> sql = ReadFile.readLines(sqlFilePath);
                     Log.i("MXM", "installing region chart data");
                     float increment = (float) (5.0/sql.size());
                     float progress = (float) 95.0;
@@ -102,7 +105,13 @@ public class RegionDownload extends AsyncTask<String, Integer, String> {
     }
     
     protected void onPostExecute(String result){
+        //set selected region to the one just downloaded
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("PrefChartLocation", region);
+        editor.commit();
         progressDialog.dismiss();
+        
+        //close the database
         regiondb.close();
         
         //restart parent activity
@@ -172,28 +181,6 @@ public class RegionDownload extends AsyncTask<String, Integer, String> {
         return true;
     }
     
-//    private String readFileAsString(String filePath) throws java.io.IOException{
-//        byte[] buffer = new byte[(int) new File(filePath).length()];
-//        BufferedInputStream f = null;
-//        try {
-//            f = new BufferedInputStream(new FileInputStream(filePath));
-//            f.read(buffer);
-//        } finally {
-//            if (f != null) try { f.close(); } catch (IOException ignored) { }
-//        }
-//        return new String(buffer);
-//    }
-    
-    public ArrayList<String> readLines(String filePath) throws IOException {
-        FileReader fileReader = new FileReader(filePath);
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-        ArrayList<String> lines = new ArrayList<String>();
-        String line = null;
-        while ((line = bufferedReader.readLine()) != null) {
-            lines.add(line);
-        }
-        bufferedReader.close();
-        return lines;
-    }
+
 
 }

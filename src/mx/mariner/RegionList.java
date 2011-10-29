@@ -13,10 +13,13 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class RegionList {
     
+    //private static final boolean DEBUG = true;
+    //private static final String tag = "MXM";
     private List<Region> list;
     private Cursor cursor;
     private GemfCollection gemfCollection = new GemfCollection();
     private String[] gemfs;
+    
     //private static final String tag = "RegionList";
     
     public RegionList(Context context, SQLiteDatabase regiondb) {
@@ -59,7 +62,7 @@ public class RegionList {
             status = "installed";
         if ( installed && (idate==0) )
             status = "update available";
-        if ( (ldate > idate) && !(installed) && (idate!=0) )
+        if ( (ldate > idate) && installed && (idate!=0) )
             status = "update available";
         return status;
     }
