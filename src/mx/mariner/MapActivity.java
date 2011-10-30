@@ -247,33 +247,35 @@ public class MapActivity extends Activity {
         mapView.setKeepScreenOn(true);
         setBrightMode(dayDuskNight);
         
-        //set configuration for onConfigurationchanged
-        Configuration config = getResources().getConfiguration();
-        int orientation = config.orientation;
-        setRequestedOrientation(orientation);
-        
         //TODO: this needs to be moved to an async task with progress bar
         //look for gemf files that have installeddate of 0 in database
         //execute cached sql/dat for missing files if it exists
-        SQLiteDatabase regiondb = (new RegionDbHelper(this)).getWritableDatabase();
-        String[] zeroDate = new ChartDataStore(regiondb).GetUninstalledRegions();
-        GemfCollection gemfCollection = new GemfCollection();
-        String[] missing = GemfCollection.lstUnion(gemfCollection.getRegionList(), zeroDate);
-        for (int i=0; i<missing.length; i++) {
-            try {
-                for (String line:ReadFile.readLines(missing[i]))
-                    regiondb.execSQL(line);
-            } catch (IOException e) {
-                Log.e(tag, e.getMessage());
-            }  
-        }
-        regiondb.close();
+//        SQLiteDatabase regiondb = (new RegionDbHelper(this)).getWritableDatabase();
+//        String[] zeroDate = new ChartDataStore(regiondb).GetUninstalledRegions();
+//        GemfCollection gemfCollection = new GemfCollection();
+//        String[] missing = GemfCollection.lstUnion(gemfCollection.getRegionList(), zeroDate);
+//        for (int i=0; i<missing.length; i++) {
+//            try {
+//                for (String line:ReadFile.readLines(missing[i]))
+//                    regiondb.execSQL(line);
+//            } catch (IOException e) {
+//                Log.e(tag, e.getMessage());
+//            }  
+//        }
+//        regiondb.close();
     }
     
     @Override
     public void onConfigurationChanged (Configuration newConfig) {
-        //locks screen orientation
-        //android:configChanges="orientation" in Manifest
+        Log.i(tag, "Orientation changed... restarting activity");
+        StorePreferences();
+        //there may be a better way to fix out of memory error but this does seem to work
+        //http://groups.google.com/group/osmdroid/browse_thread/thread/d6918e3e46c40504/30e9bf54eb1e5e83?show_docid=30e9bf54eb1e5e83&pli=1
+        Intent intent = getIntent();
+        int pid = android.os.Process.myPid();
+        finish();
+        startActivity(intent);
+        android.os.Process.killProcess(pid);
     }
     
     @Override
