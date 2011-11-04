@@ -21,7 +21,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -38,10 +37,10 @@ public class RegionDownload extends AsyncTask<String, Integer, String> {
     private String gemfFilePath;  //where region gemf will be stored
     private String sqlUrl; //where region sql will be fetched from
     private String gemfUrl; //where region will be fetched from
-    private String region;
+    //private String region;
     private Activity parent;
     
-    private SharedPreferences prefs;
+    //private SharedPreferences prefs;
     protected ProgressDialog progressDialog;
     
     private SQLiteDatabase regiondb;
@@ -49,17 +48,16 @@ public class RegionDownload extends AsyncTask<String, Integer, String> {
     protected RegionDownload(Context context, SQLiteDatabase regiondb, String region, 
              ProgressDialog progressDialog, Activity activity) {
         this.regiondb = regiondb;
-        this.sqlFilePath = context.getString(R.string.data_path)+region+".sql";
+        this.sqlFilePath = Environment.getExternalStorageDirectory()+"/mxmariner/"+region+".data";
         this.gemfPartPath = Environment.getExternalStorageDirectory()+"/mxmariner/"+region+".part";
         this.gemfFilePath = Environment.getExternalStorageDirectory()+"/mxmariner/"+region+".gemf";
         this.sqlUrl = context.getString(R.string.region_url)+region+".sql";
         this.gemfUrl = context.getString(R.string.region_url)+region+".gemf";
         this.progressDialog = progressDialog;
         this.parent = activity;
-        this.region = region;
+        //this.region = region;
         USER = context.getString(R.string.http_user);
         PASS = context.getString(R.string.http_pass);
-        
     }
     
     @Override
@@ -86,9 +84,9 @@ public class RegionDownload extends AsyncTask<String, Integer, String> {
                         regiondb.execSQL(line);
                     }
                     
-                    File file = new File(sqlFilePath);
-                    if (file.delete())
-                        Log.i(tag, "deleted file:"+sqlFilePath);
+                    //File file = new File(sqlFilePath);
+                    //if (file.delete())
+                        //Log.i(tag, "deleted file:"+sqlFilePath);
                     
                 } catch (IOException e) {
                     Log.e("MXM", e.getMessage());
@@ -106,10 +104,10 @@ public class RegionDownload extends AsyncTask<String, Integer, String> {
     
     protected void onPostExecute(String result){
         //set selected region to the one just downloaded
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("PrefChartLocation", region);
-        editor.commit();
-        progressDialog.dismiss();
+//        SharedPreferences.Editor editor = prefs.edit();
+//        editor.putString("PrefChartLocation", region);
+//        editor.commit();
+//        progressDialog.dismiss();
         
         //close the database
         regiondb.close();

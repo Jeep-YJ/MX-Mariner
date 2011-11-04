@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MX Mariner</string>
-    <string name="app_version">1.0</string>
-    <string name="credits">Website:\n
+    <string name="app_version">Beta 1.0</string>
+    <string name="app_buildno">11042011</string>
+    <string name="credits">
+Website:\n
 MXMariner.com\n\n
 
 Credits:\n
@@ -22,7 +24,9 @@ It displays data for you, but there is no guarantee it is correct, there are man
 MX Mariner is not a replacement for navigational knowledge, nor can it navigate by it self.
 MX Mariner is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
 without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-DO NOT rely upon MX Mariner for safety of life or property.
+DO NOT rely upon MX Mariner for safety of life or property.\n\n
+
+See License information in the \'Settings\' menu for details.
     </string>
     <string name="copyright">Copyright 2011 WILL KAMP All rights reserved.\n\n
 

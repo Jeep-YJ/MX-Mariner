@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_url">http://DOMAIN/regions/update/UPDATE.data</string>
+    <string name="region_url">http://DOMAIN/regions/</string> 
+    <string name="data_path">/data/data/mx.mariner/</string>
+    <string name="http_user"></string>
+    <string name="http_pass"></string>
+</resources>

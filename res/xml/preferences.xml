@@ -16,14 +16,34 @@
 			android:key="ZoomBtnPref" 
 			android:defaultValue="true">
 		</CheckBoxPreference>
+		<Preference 
+          android:key="DayBrightPref" 
+          android:summary="Adjust backlight levels for day mode" 
+          android:title="Day Backlight Level">
+        </Preference>
+        <Preference 
+          android:key="DuskBrightPref" 
+          android:summary="Adjust backlight levels for day, dusk and night modes" 
+          android:title="Dusk Backlight Level">
+        </Preference>
+        <Preference 
+          android:key="NightBrightPref" 
+          android:summary="Adjust backlight levels for day, dusk and night modes" 
+          android:title="Night Backlight Level">
+        </Preference>
+        <Preference 
+          android:key="Reset" 
+          android:summary="Reset backlight level settings back to default" 
+          android:title="Reset Backlight Levels">
+        </Preference>
 	</PreferenceScreen>
 	<PreferenceScreen
 		android:summary="Manage chart regions"
 		android:title="Charts"
 		android:key="ChartRegions">
 		  <ListPreference
-		  	android:summary="Select which chart region to use."
-		  	android:title="Select Current Chart Region"
+		  	android:summary="Select which chart region to use in chart view."
+		  	android:title="Select Chart Region"
 		  	android:key="PrefChartLocation">
 		  </ListPreference>
 		  <Preference

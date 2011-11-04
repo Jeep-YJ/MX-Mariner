@@ -35,7 +35,7 @@ public class RegionUpdateCheck extends AsyncTask<String, Integer, String> {
     
     public RegionUpdateCheck(SQLiteDatabase regiondb, Context context) {
         this.regiondb = regiondb;
-        FILEPATH = context.getString(R.string.data_path)+"update.sql";
+        FILEPATH = context.getString(R.string.data_path)+"update.data";
         URL = context.getString(R.string.update_url);
         USER = context.getString(R.string.http_user);
         PASS = context.getString(R.string.http_pass);

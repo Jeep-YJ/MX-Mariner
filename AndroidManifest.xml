@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="mx.mariner" 
-	android:versionName="@string/app_version"
-	android:versionCode="1">
+	android:versionName="@string/app_version" android:versionCode="1">
 	<supports-screens 
 		android:largeScreens="true"
 		android:normalScreens="true" 
@@ -24,13 +23,11 @@
 		</activity>
 		<activity
 			android:name="mx.mariner.SettingsDialog"
-			android:label="@string/app_name"
-			android:screenOrientation="behind">
+			android:label="@string/app_name">
 		</activity>
 		<activity
 			android:name="mx.mariner.RegionActivity"
-			android:label="@string/app_name"
-			android:screenOrientation="behind">
+			android:label="@string/app_name">
 		</activity>
 	</application>
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/> 

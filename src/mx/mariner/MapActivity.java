@@ -79,6 +79,7 @@ public class MapActivity extends Activity {
     private Button btnZoomIn;
     private Button btnZoomOut;
     private Button btnFollow;
+    private boolean warning;
     
     //====================
     // Methods
@@ -89,12 +90,17 @@ public class MapActivity extends Activity {
         start_lat = prefs.getInt("Latitude", 0);
         start_lon = prefs.getInt("Longitude", 0);
         start_zoom = prefs.getInt("Zoom", 3);
-        dayDuskNight = prefs.getInt("DDN", 0);
-        //region overlay set in onResume
+        warning = prefs.getBoolean("Warning", true);
+        //set to day mode always when app starts for screens where night mode is blank
+        if (!warning) 
+            dayDuskNight = prefs.getInt("DDN", 0);
+        else
+            dayDuskNight = 0; //
     }
     
-    void StorePreferences() {
+    void StorePreferences(Boolean warning) {
         SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("Warning", warning);
         editor.putInt("Latitude", mapView.getMapCenter().getLatitudeE6());
         editor.putInt("Longitude", mapView.getMapCenter().getLongitudeE6());
         editor.putInt("Zoom", mapView.getZoomLevel());
@@ -171,23 +177,27 @@ public class MapActivity extends Activity {
     private void setBrightMode(int level) {
         FrameLayout ddnMask = (FrameLayout) findViewById(R.id.ddnMask);
         WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
+        
         switch (level) {
             case 0:
                 ddnMask.setBackgroundResource(R.color.day);
-                layoutParams.screenBrightness = (float) 1.0;
+                float day = prefs.getFloat("DayBright", (float) 1.0);
+                layoutParams.screenBrightness = day;
                 getWindow().setAttributes(layoutParams);
                 break;
                 
             case 1:
                 ddnMask.setBackgroundResource(R.color.day);
-                layoutParams.screenBrightness = (float) 0.1;
+                float dusk = prefs.getFloat("DuskBright", (float) 0.1);
+                layoutParams.screenBrightness = dusk;
                 getWindow().setAttributes(layoutParams);
                 //Toast.makeText(this, "Dusk Mode", Toast.LENGTH_SHORT).show();
                 break;
                 
             case 2:
                 ddnMask.setBackgroundResource(R.color.night);
-                layoutParams.screenBrightness = (float) 0.01;
+                float night = prefs.getFloat("NightBright", (float) 0.05);
+                layoutParams.screenBrightness = night;
                 getWindow().setAttributes(layoutParams);
                 //Toast.makeText(this, "Night Mode", Toast.LENGTH_SHORT).show();
                 break;
@@ -209,6 +219,7 @@ public class MapActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         SetPreferences(PreferenceManager.getDefaultSharedPreferences(getBaseContext())); //initial position, zoom, gemf-file
+        
         mapView = (MapView) findViewById(R.id.mapview);
         mActivity = this;
         mResourceProxy = new DefaultResourceProxyImpl(getApplicationContext());
@@ -245,7 +256,10 @@ public class MapActivity extends Activity {
 
         //settings
         mapView.setKeepScreenOn(true);
-        setBrightMode(dayDuskNight);
+        //setBrightMode(dayDuskNight);
+        
+        if (warning)
+            SettingsDialog.ShowWarning(this);
         
         //TODO: this needs to be moved to an async task with progress bar
         //look for gemf files that have installeddate of 0 in database
@@ -268,7 +282,7 @@ public class MapActivity extends Activity {
     @Override
     public void onConfigurationChanged (Configuration newConfig) {
         Log.i(tag, "Orientation changed... restarting activity");
-        StorePreferences();
+        StorePreferences(false);
         //there may be a better way to fix out of memory error but this does seem to work
         //http://groups.google.com/group/osmdroid/browse_thread/thread/d6918e3e46c40504/30e9bf54eb1e5e83?show_docid=30e9bf54eb1e5e83&pli=1
         Intent intent = getIntent();
@@ -280,13 +294,14 @@ public class MapActivity extends Activity {
     
     @Override
     public void onPause() {
-        StorePreferences();
+        StorePreferences(false);
         mapView.getOverlays().clear();
         super.onPause();
     }
     
     @Override
     public void onResume() {
+        //overlay selected retion
         region = prefs.getString("PrefChartLocation", "None");
         gemfOverlay(regiondir + region);
         Toast.makeText(getApplicationContext(), "Using chart region: "+region, Toast.LENGTH_SHORT).show();
@@ -308,6 +323,7 @@ public class MapActivity extends Activity {
                 mapView.getOverlays().add((Overlay) path);
        }
        
+       //setup buttons according to preferences
        LinearLayout llb = (LinearLayout) this.findViewById(R.id.linearLayout_buttons);
        llb.removeView(btnZoomIn);
        llb.removeView(btnZoomOut);
@@ -318,18 +334,14 @@ public class MapActivity extends Activity {
            llb.addView(btnFollow);
        } else
            llb.addView(btnFollow);
-       
-//       if (prefs.getBoolean("ZoomBtnPref", true)) {
-//           btnZoomIn.setVisibility(View.INVISIBLE);
-//           btnZoomOut.setVisibility(View.INVISIBLE);
-//       } else {
-//           btnZoomIn.setVisibility(View.VISIBLE);
-//           btnZoomOut.setVisibility(View.VISIBLE);
-//       }
         
        //vessel and scalebar
        mapView.getOverlays().add(mLocationOverlay);
        mapView.getOverlays().add(mScaleBarOverlay);
+       
+       //ddn mode
+       setBrightMode(dayDuskNight);
+       
        super.onResume();
     }
     
@@ -341,7 +353,7 @@ public class MapActivity extends Activity {
         return true;
     }
     
-    //android menu button dynamic changes
+    //android menu items dynamic changes
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem item = (MenuItem) menu.findItem(R.id.ddn);
@@ -359,7 +371,7 @@ public class MapActivity extends Activity {
         return true;
     }
     
-    //andriod menu button items
+    //andriod menu items
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) 
@@ -378,7 +390,7 @@ public class MapActivity extends Activity {
             
             case R.id.quit:
                 Log.d(tag, "Finishing");
-                StorePreferences();
+                StorePreferences(true);
                 fullexit();
                 return true;
                 

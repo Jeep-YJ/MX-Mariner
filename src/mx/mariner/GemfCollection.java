@@ -145,7 +145,10 @@ public class GemfCollection {
     }
     
     public String[] getFileList() {
-        return gemfList;
+        if (gemfList.length == 0)
+            return new String[] {"None"};
+        else
+            return gemfList;
     }
     
     public String[] getRegionList() {
