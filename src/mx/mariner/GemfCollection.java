@@ -69,7 +69,6 @@ public class GemfCollection {
     private String[] filenameFilter(final String extention) {
         //filter directory files
         FilenameFilter filter = new FilenameFilter() {
-            @Override
             public boolean accept(File dir, String name) {
                 return name.endsWith(extention);
             }

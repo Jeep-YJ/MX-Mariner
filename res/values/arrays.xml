@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="base_maps">
+        <item>Satellite</item>
+        <item>Road Map</item>
+    </string-array>
+    <string-array name="screen_modes">
+        <item>Day Mode</item>
+        <item>Dusk Mode</item>
+        <item>Night Mode</item>
+    </string-array>
+</resources>

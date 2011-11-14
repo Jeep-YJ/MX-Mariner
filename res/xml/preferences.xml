@@ -1,22 +1,29 @@
 <PreferenceScreen
-	android:key="TopLevelPreferences" xmlns:android="http://schemas.android.com/apk/res/android">
-	<PreferenceScreen
-		android:summary="Chart view settings"
-		android:title="View"
-		android:key="ViewPrefs">
-		<CheckBoxPreference
-			android:summary="Toggles chart outlines on or off"
-			android:title="Chart Outlines"
-			android:key="OutlinePref" 
-			android:defaultValue="true">
-		</CheckBoxPreference>
-		<CheckBoxPreference
-			android:summary="Toggles zoom buttons on or off"
-			android:title="Zoom Buttons"
-			android:key="ZoomBtnPref" 
-			android:defaultValue="true">
-		</CheckBoxPreference>
-		<Preference 
+    android:key="TopLevelPreferences" xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceScreen
+        android:summary="Chart view settings"
+        android:title="View"
+        android:key="ViewPrefs">
+        <ListPreference 
+            android:key="BaseMapSetting" 
+            android:summary="Change the online base map style." 
+            android:title="Base Map Layer" 
+            android:entries="@array/base_maps" 
+            android:entryValues="@array/base_maps">
+        </ListPreference>
+        <CheckBoxPreference
+            android:summary="Toggles chart outlines on or off"
+            android:title="Chart Outlines"
+            android:key="OutlinePref" 
+            android:defaultValue="true">
+        </CheckBoxPreference>
+        <CheckBoxPreference
+            android:summary="Toggles zoom buttons on or off"
+            android:title="Zoom Buttons"
+            android:key="ZoomBtnPref" 
+            android:defaultValue="true">
+        </CheckBoxPreference>
+        <Preference 
           android:key="DayBrightPref" 
           android:summary="Adjust backlight levels for day mode" 
           android:title="Day Backlight Level">
@@ -36,40 +43,23 @@
           android:summary="Reset backlight level settings back to default" 
           android:title="Reset Backlight Levels">
         </Preference>
-	</PreferenceScreen>
-	<PreferenceScreen
-		android:summary="Manage chart regions"
-		android:title="Charts"
-		android:key="ChartRegions">
-		  <ListPreference
-		  	android:summary="Select which chart region to use in chart view."
-		  	android:title="Select Chart Region"
-		  	android:key="PrefChartLocation">
-		  </ListPreference>
-		  <Preference
-		  	android:summary="Download new NOAA raster chart regions"
-		  	android:title="Get new US chart regions"
-		  	android:key="ChartDownloader">
-		  </Preference>
-<!-- 		  <Preference -->
-<!--             android:summary="Download new LINZ raster chart regions" -->
-<!--             android:title="Get new New Zealand chart regions" -->
-<!--             android:key="NzChartDownloader"> -->
-<!--           </Preference> 	   -->
-	</PreferenceScreen>
-	<Preference
+    </PreferenceScreen>
+    <Preference android:summary="Download new NOAA raster chart regions" android:title="Install Charts" android:key="ChartDownloader">
+          </Preference>
+    <Preference
         android:summary="Information about MX Mariner and credits"
         android:title="About"
         android:key="About">
     </Preference>
-	<Preference
-  		android:summary="Warning about using MX Mariner"
-  		android:title="Warning"
-  		android:key="Warning">
- 	</Preference>
- 	<Preference
+    <Preference
+          android:summary="Warning about using MX Mariner"
+          android:title="Warning"
+          android:key="Warning">
+     </Preference>
+     <Preference
       android:summary="MX Mariner license information"
       android:title="License"
       android:key="License">
-    </Preference> 
+    </Preference>
+      
 </PreferenceScreen>

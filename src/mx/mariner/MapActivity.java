@@ -7,6 +7,7 @@ package mx.mariner;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.LinkedList;
 
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.ResourceProxy;
@@ -15,7 +16,9 @@ import org.osmdroid.tileprovider.modules.GEMFFileArchive;
 import org.osmdroid.tileprovider.modules.IArchiveFile;
 import org.osmdroid.tileprovider.modules.MapTileFileArchiveProvider;
 import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
+import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.tileprovider.tilesource.bing.BingMapTileSource;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
 import org.osmdroid.util.GEMFFile;
 import org.osmdroid.util.GeoPoint;
@@ -51,29 +54,33 @@ public class MapActivity extends Activity {
     // Constants
     //====================
     
+    
+    private static final int gemfLayer = 0;
     private static final String tag = "MXM";
     
     //====================
     // Fields
     //====================
-    
+
     private MapController mapController;
     private MapView mapView;
     private Activity mActivity;
     private MxmMyLocationOverlay mLocationOverlay;
     private ScaleBarOverlay mScaleBarOverlay;
     private ResourceProxy mResourceProxy;
-    private int dayDuskNight; //0-day, 1-dusk, 2-night
+    protected int dayDuskNight; //0-day, 1-dusk, 2-night
     private IArchiveFile[] myArchives = new IArchiveFile[1];
     private MxmBitmapTileSourceBase mBitmapTileSourceBase;
     private MapTileModuleProviderBase[] myProviders = new MapTileModuleProviderBase[1];
     private MapTileProviderArray myGemfTileProvider;
     private TilesOverlay myGemfOverlay;
-    private SharedPreferences prefs;
+    protected SharedPreferences prefs;
+    protected SharedPreferences.Editor editor;
+    private GemfCollection gemfCollection;
     private int start_lat; //geopoint
     private int start_lon; //geopoint
     private int start_zoom;
-    private String region;
+    protected String region;
     private String regiondir = Environment.getExternalStorageDirectory()+"/mxmariner/";
     private ChartOutlines chartOutlines = new ChartOutlines();
     private Button btnZoomIn;
@@ -85,8 +92,9 @@ public class MapActivity extends Activity {
     // Methods
     //====================
     
-    void SetPreferences(SharedPreferences preferences) {
+    private void SetPreferences(SharedPreferences preferences) {
         prefs = preferences;
+        editor = prefs.edit();
         start_lat = prefs.getInt("Latitude", 0);
         start_lon = prefs.getInt("Longitude", 0);
         start_zoom = prefs.getInt("Zoom", 3);
@@ -98,8 +106,8 @@ public class MapActivity extends Activity {
             dayDuskNight = 0; //
     }
     
-    void StorePreferences(Boolean warning) {
-        SharedPreferences.Editor editor = prefs.edit();
+    protected void StorePreferences(Boolean warning) {
+        //SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("Warning", warning);
         editor.putInt("Latitude", mapView.getMapCenter().getLatitudeE6());
         editor.putInt("Longitude", mapView.getMapCenter().getLongitudeE6());
@@ -109,7 +117,6 @@ public class MapActivity extends Activity {
     }
 
     private View.OnClickListener ZoomInListener = new View.OnClickListener() {
-        @Override
         public void onClick(View v) {
             //is there a better way?...zoom during follow is screwed up otherwise
             if (mLocationOverlay.isFollowLocationEnabled()) {
@@ -121,7 +128,6 @@ public class MapActivity extends Activity {
     };
     
     private View.OnClickListener ZoomOutListener = new View.OnClickListener() {
-        @Override
         public void onClick(View v)
         {
             //is there a better way?...zoom during follow is screwed up otherwise
@@ -134,7 +140,6 @@ public class MapActivity extends Activity {
     };
     
     private View.OnClickListener FollowListener = new View.OnClickListener() {
-        @Override
         public void onClick(View v)
         {
             if (!mLocationOverlay.isFollowLocationEnabled())
@@ -154,11 +159,11 @@ public class MapActivity extends Activity {
             myArchives[0] = GEMFFileArchive.getGEMFFileArchive(location);
             mBitmapTileSourceBase = new MxmBitmapTileSourceBase("test", null, minZoom, maxZoom, 256, ".png");            
             //myProviders = new MapTileModuleProviderBase[1];
-            myProviders[0] = new MapTileFileArchiveProvider(new SimpleRegisterReceiver(getApplicationContext()), mBitmapTileSourceBase, myArchives);
+            myProviders[0] = new MapTileFileArchiveProvider(new SimpleRegisterReceiver(this), mBitmapTileSourceBase, myArchives);
             myGemfTileProvider = new MapTileProviderArray(mBitmapTileSourceBase, null, myProviders);
-            myGemfOverlay = new TilesOverlay(myGemfTileProvider, getApplicationContext());
+            myGemfOverlay = new TilesOverlay(myGemfTileProvider, this);
             myGemfOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
-            mapView.getOverlays().add(myGemfOverlay);           
+            mapView.getOverlays().add(gemfLayer, myGemfOverlay);
         } catch (FileNotFoundException e) {
             Log.e(tag, e.getMessage());
         } catch (IOException e) {
@@ -166,19 +171,29 @@ public class MapActivity extends Activity {
         }
     }
     
-    public void ddnChange() {
-        dayDuskNight ++;
-        if (dayDuskNight>=3)
-            dayDuskNight = 0;
-        
-        setBrightMode(dayDuskNight);
+    protected void toggleChartLayer() {
+        if (!prefs.getBoolean("UseChartOverlay", true)) {
+            mapView.getOverlays().remove(gemfLayer);
+            Toast.makeText(this, "Charts Layer: Off", Toast.LENGTH_SHORT).show();
+        } else {
+            region = prefs.getString("PrefChartLocation", "None");
+            gemfOverlay(regiondir + region);
+            Toast.makeText(this, "Charts Layer: On", Toast.LENGTH_SHORT).show();
+        }
     }
     
-    private void setBrightMode(int level) {
+    protected void changeChartRegion(String newRegion) {
+        editor.putString("PrefChartLocation", newRegion);
+        editor.commit();
+        mapView.getOverlays().clear();
+        addMapLayers();
+    }
+    
+    protected void setBrightMode() {
         FrameLayout ddnMask = (FrameLayout) findViewById(R.id.ddnMask);
         WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
         
-        switch (level) {
+        switch (dayDuskNight) {
             case 0:
                 ddnMask.setBackgroundResource(R.color.day);
                 float day = prefs.getFloat("DayBright", (float) 1.0);
@@ -202,7 +217,28 @@ public class MapActivity extends Activity {
                 //Toast.makeText(this, "Night Mode", Toast.LENGTH_SHORT).show();
                 break;
         }
+    }
+    
+    protected void setBaseMap() {
+        //TODO: 
+    	if (BingMapTileSource.getBingKey().length() == 0) {
+            BingMapTileSource.retrieveBingKey(this);
+        }
+        BingMapTileSource bmts = new BingMapTileSource(null);
+        if (!TileSourceFactory.containsTileSource(bmts.name())) {
+            TileSourceFactory.addTileSource(bmts);
+        }
         
+        String satellite = this.getResources().getStringArray(R.array.base_maps)[0];
+        String style =prefs.getString("BaseMapSetting", satellite);
+        
+        if (style.equals(satellite))
+            bmts.setStyle(BingMapTileSource.IMAGERYSET_AERIALWITHLABELS);
+        else
+            bmts.setStyle(BingMapTileSource.IMAGERYSET_ROAD);
+        
+        ITileSource tileSource = TileSourceFactory.getTileSource(bmts.name());
+        mapView.setTileSource(tileSource);
     }
     
     public void fullexit() {
@@ -218,25 +254,23 @@ public class MapActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        SetPreferences(PreferenceManager.getDefaultSharedPreferences(getBaseContext())); //initial position, zoom, gemf-file
+        SetPreferences(PreferenceManager.getDefaultSharedPreferences(this)); //initial position, zoom
         
         mapView = (MapView) findViewById(R.id.mapview);
         mActivity = this;
-        mResourceProxy = new DefaultResourceProxyImpl(getApplicationContext());
-         
-        mapView.setTileSource(TileSourceFactory.MAPNIK);
+        mResourceProxy = new DefaultResourceProxyImpl(this);
+        
+        setBaseMap();
+        
         mapView.setBuiltInZoomControls(false);
         mapView.setMultiTouchControls(true);
         mapController = mapView.getController();
         mapController.setZoom(start_zoom);
         mapController.setCenter(new GeoPoint(start_lat, start_lon));
         
-        //MapTileProviderBase mapTileProviderBase = new MapTileProviderBase(ITileSource pTileSource);
-        //GoogleTilesOverlay googleTilesOverlay = new GoogleTilesOverlay(mapTileProviderBase, mResourceProxy);
-        
         
         //location overlay setup
-        mLocationOverlay = new MxmMyLocationOverlay(getBaseContext(), mapView, mActivity, mResourceProxy);
+        mLocationOverlay = new MxmMyLocationOverlay(this, mapView, mActivity, mResourceProxy);
         mLocationOverlay.enableMyLocation();
         
         //scale-bar overlay setup
@@ -299,29 +333,42 @@ public class MapActivity extends Activity {
         super.onPause();
     }
     
-    @Override
-    public void onResume() {
-        //overlay selected retion
+    protected void addMapLayers() {
+        //overlay selected region
         region = prefs.getString("PrefChartLocation", "None");
-        gemfOverlay(regiondir + region);
-        Toast.makeText(getApplicationContext(), "Using chart region: "+region, Toast.LENGTH_SHORT).show();
+        if (prefs.getBoolean("UseChartOverlay", true)) {
+            gemfOverlay(regiondir + region);
+            Toast.makeText(this, "Using chart region: "+region, Toast.LENGTH_SHORT).show();
+        }
         
         //chart outlines
-        chartOutlines.clearPaths();
-        if (prefs.getBoolean("OutlinePref", true)){
-            
-            SQLiteDatabase regiondb = (new RegionDbHelper(this)).getReadableDatabase();
-            ChartDataStore datastore = new ChartDataStore(regiondb);
-            for (String coordinates : datastore.getOutlines(region)){
-                //Log.i(tag, coordinates);
-                //pink noaa chart color Color.rgb(219, 73, 150)
-                chartOutlines.addPathOverlay(Color.rgb(69, 172, 137), mResourceProxy, coordinates);
-            }
-            regiondb.close();
-            
-            for (Object path : chartOutlines.getPaths())
-                mapView.getOverlays().add((Overlay) path);
+       chartOutlines.clearPaths();
+       if (prefs.getBoolean("OutlinePref", true)){
+           
+           SQLiteDatabase regiondb = (new RegionDbHelper(this)).getReadableDatabase();
+           ChartDataStore datastore = new ChartDataStore(regiondb);
+           for (String coordinates : datastore.getOutlines(region)){
+               //Log.i(tag, coordinates);
+               //pink noaa chart color Color.rgb(219, 73, 150)
+               chartOutlines.addPathOverlay(Color.rgb(69, 172, 137), mResourceProxy, coordinates);
+           }
+           regiondb.close();
+           
+           LinkedList<Overlay> collection = new LinkedList<Overlay>();
+           for (Object path : chartOutlines.getPaths()) {
+               collection.add( (Overlay) path);
+           }
+           mapView.getOverlays().addAll(collection);
        }
+       
+       //vessel and scalebar
+       mapView.getOverlays().add(mLocationOverlay);
+       mapView.getOverlays().add(mScaleBarOverlay);
+    }
+    
+    @Override
+    public void onResume() {
+        addMapLayers();
        
        //setup buttons according to preferences
        LinearLayout llb = (LinearLayout) this.findViewById(R.id.linearLayout_buttons);
@@ -334,15 +381,12 @@ public class MapActivity extends Activity {
            llb.addView(btnFollow);
        } else
            llb.addView(btnFollow);
-        
-       //vessel and scalebar
-       mapView.getOverlays().add(mLocationOverlay);
-       mapView.getOverlays().add(mScaleBarOverlay);
-       
+    
        //ddn mode
-       setBrightMode(dayDuskNight);
+       setBrightMode();
        
        super.onResume();
+       gemfCollection = new GemfCollection();
     }
     
     //android menu button
@@ -353,32 +397,37 @@ public class MapActivity extends Activity {
         return true;
     }
     
-    //android menu items dynamic changes
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem item = (MenuItem) menu.findItem(R.id.ddn);
-        switch (dayDuskNight) {
-        case 0:
-            item.setTitle("Dusk Mode");
-            break;    
-        case 1:
-            item.setTitle("Night Mode");
-            break;    
-        case 2:
-            item.setTitle("Day Mode");
-            break;
-        }
-        return true;
-    }
+//    //android menu items dynamic changes
+//    @Override
+//    public boolean onPrepareOptionsMenu(Menu menu) {
+//        MenuItem item = (MenuItem) menu.findItem(R.id.ddn);
+//        switch (dayDuskNight) {
+//        case 0:
+//            item.setTitle("Dusk Mode");
+//            break;    
+//        case 1:
+//            item.setTitle("Night Mode");
+//            break;    
+//        case 2:
+//            item.setTitle("Day Mode");
+//            break;
+//        }
+//        return true;
+//    }
     
     //andriod menu items
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) 
         {
-            case R.id.ddn:
-                Log.d(tag, "Changine brightness mode");
-                ddnChange();
+            case R.id.mapmode:
+                Log.d(tag, "Changin map mode");
+                DisplayMode displayMode = new DisplayMode(this, gemfCollection.getFileList());
+                displayMode.setTitle("Map Display Mode");
+                displayMode.setCanceledOnTouchOutside(false);
+                displayMode.setCancelable(false);
+                displayMode.show();
+                //ddnChange();
                 return true;
                 
             case R.id.settings:

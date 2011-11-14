@@ -348,7 +348,6 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
         }
     }
 
-    @Override
     public void onLocationChanged(final Location location) {
         if (DEBUGMODE) {
             logger.debug("onLocationChanged(" + location + ")");
@@ -372,23 +371,19 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
         mRunOnFirstFix.clear();
         
         sogTxt.setText(String.valueOf((double)Math.round(location.getSpeed()*1.94 * 100) / 100 )+"kts | ");
-        cogTxt.setText(String.valueOf(location.getBearing())+"° ");
+        cogTxt.setText(String.valueOf(location.getBearing())+"ï¿½ ");
         
     }
 
-    @Override
     public void onProviderDisabled(final String provider) {
     }
 
-    @Override
     public void onProviderEnabled(final String provider) {
     }
 
-    @Override
     public void onStatusChanged(final String provider, final int status, final Bundle extras) {
     }
 
-    @Override
     public boolean onSnapToItem(final int x, final int y, final Point snapPoint,
             final MapView mapView) {
         if (this.mLocation != null) {
@@ -408,7 +403,6 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
         }
     }
 
-    @Override
     public boolean onTouchEvent(final MotionEvent event, final MapView mapView) {
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
             if ( mFollow ) {
@@ -420,12 +414,10 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
         return super.onTouchEvent(event, mapView);
     }
 
-    @Override
     public void onAccuracyChanged(final Sensor arg0, final int arg1) {
         // This is not interesting for us at the moment
     }
 
-    @Override
     public void onSensorChanged(final SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ORIENTATION) {
             if (event.values != null) {
@@ -439,17 +431,14 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
     // Menu handling methods
     // ===========================================================
 
-    @Override
     public void setOptionsMenuEnabled(final boolean pOptionsMenuEnabled) {
         this.mOptionsMenuEnabled = pOptionsMenuEnabled;
     }
 
-    @Override
     public boolean isOptionsMenuEnabled() {
         return this.mOptionsMenuEnabled;
     }
 
-    @Override
     public boolean onCreateOptionsMenu(final Menu pMenu, final int pMenuIdOffset,
             final MapView pMapView) {
         pMenu.add(0, MENU_MY_LOCATION + pMenuIdOffset, Menu.NONE,
@@ -463,13 +452,11 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
         return true;
     }
 
-    @Override
     public boolean onPrepareOptionsMenu(final Menu pMenu, final int pMenuIdOffset,
             final MapView pMapView) {
         return false;
     }
 
-    @Override
     public boolean onOptionsItemSelected(final MenuItem pItem, final int pMenuIdOffset,
             final MapView pMapView) {
         final int menuId = pItem.getItemId() - pMenuIdOffset;
@@ -509,7 +496,6 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
         }
     }
 
-    @Override
     public Location getLastFix() {
         return mLocation;
     }
@@ -518,7 +504,6 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
      * @deprecated use {@link enableFollowLocation()} and {@link disableFollowLocation()} instead.
      * @param follow
      */
-    @Deprecated
     public void followLocation(final boolean follow) {
         if (follow) {
             enableFollowLocation();
@@ -578,7 +563,6 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
      * features of this overlay. Remember to call the corresponding disableMyLocation() in your
      * Activity's Activity.onPause() method to turn off updates when in the background.
      */
-    @Override
     public boolean enableMyLocation() {
         boolean result = true;
 
@@ -607,7 +591,6 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
     /**
      * Disable location updates
      */
-    @Override
     public void disableMyLocation() {
         if (mLocationListener != null) {
             mLocationListener.stopListening();
@@ -626,7 +609,6 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
      *
      * @return true if enabled, false otherwise
      */
-    @Override
     public boolean isMyLocationEnabled() {
         return mLocationListener != null;
     }
@@ -637,7 +619,6 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
      * features of this overlay. Remember to call the corresponding disableCompass() in your
      * Activity's Activity.onPause() method to turn off updates when in the background.
      */
-    @Override
     public boolean enableCompass() {
         boolean result = true;
         if (mSensorListener == null) {
@@ -657,7 +638,6 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
     /**
      * Disable orientation updates
      */
-    @Override
     public void disableCompass() {
         if (mSensorListener != null) {
             mSensorListener.stopListening();
@@ -678,17 +658,14 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
      *
      * @return true if enabled, false otherwise
      */
-    @Override
     public boolean isCompassEnabled() {
         return mSensorListener != null;
     }
 
-    @Override
     public float getOrientation() {
         return mAzimuth;
     }
 
-    @Override
     public boolean runOnFirstFix(final Runnable runnable) {
         if (mLocationListener != null && mLocation != null) {
             new Thread(runnable).start();

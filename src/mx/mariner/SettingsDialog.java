@@ -11,15 +11,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 
 public class SettingsDialog extends PreferenceActivity {
     
-    ListPreference prefChartLocation;
     Context context;
     
     @Override
@@ -27,12 +25,6 @@ public class SettingsDialog extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
         
-        //select chart region
-        prefChartLocation = (ListPreference) this.findPreference("PrefChartLocation");
-        
-        String[] entries = new GemfCollection().getFileList();
-        prefChartLocation.setEntries(entries);
-        prefChartLocation.setEntryValues(entries);
         context = this;
         
         //get new chart regions
@@ -108,13 +100,6 @@ public class SettingsDialog extends PreferenceActivity {
         
     }
     
-    public void onRestart() {
-        super.onRestart();
-        String[] entries = new GemfCollection().getFileList();
-        prefChartLocation.setEntries(entries);
-        prefChartLocation.setEntryValues(entries);
-    }
-    
     private void ShowAbout() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         String version = String.format("Version: %s\n", getResources().getString(R.string.app_version));
@@ -123,7 +108,6 @@ public class SettingsDialog extends PreferenceActivity {
         builder.setIcon(R.drawable.icon);
         builder.setMessage(version + build+ getResources().getString(R.string.credits));
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
             public void onClick(DialogInterface dialog, int which) {
                 return;
             }
@@ -138,7 +122,6 @@ public class SettingsDialog extends PreferenceActivity {
         builder.setIcon(R.drawable.icon);
         builder.setMessage(context.getResources().getString(R.string.nav_warning));
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
             public void onClick(DialogInterface dialog, int which) {
                 return;
             }
@@ -153,7 +136,6 @@ public class SettingsDialog extends PreferenceActivity {
         builder.setIcon(R.drawable.icon);
         builder.setMessage(getResources().getString(R.string.copyright));
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
             public void onClick(DialogInterface dialog, int which) {
                 return;
             }
@@ -166,14 +148,12 @@ public class SettingsDialog extends PreferenceActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Reset backlight levels to default?");
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
             public void onClick(DialogInterface dialog, int which) {
                 Reset();
                 return;
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
             public void onClick(DialogInterface dialog, int which) {
                 return;
             }

@@ -1,18 +1,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-	<item
-		android:id="@+id/ddn"
-		android:title="Dusk Mode" 
-		android:icon="@drawable/ddn"/>
-	<item
-		android:id="@+id/settings"
-		android:title="Settings" 
-		android:icon="@drawable/settings"/>
-<!-- 	<item  -->
-<!-- 		android:id="@+id/about"  -->
-<!-- 		android:title="About" -->
-<!-- 		android:icon="@drawable/about"/> -->
-	<item
-		android:id="@+id/quit"
-		android:title="Quit" 
-		android:icon="@drawable/quit"/>
+    <item
+        android:id="@+id/mapmode"
+        android:title="Map Mode" 
+        android:icon="@drawable/mode"/>
+    <item
+        android:id="@+id/settings"
+        android:title="Settings" 
+        android:icon="@drawable/settings"/>
+    <item
+        android:id="@+id/quit"
+        android:title="Quit" 
+        android:icon="@drawable/quit"/>
 </menu>

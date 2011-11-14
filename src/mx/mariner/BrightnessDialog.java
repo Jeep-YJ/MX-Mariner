@@ -31,15 +31,12 @@ public class BrightnessDialog extends Dialog {
         
         onSeekListen = new SeekBar.OnSeekBarChangeListener() {
             
-            @Override
             public void onStopTrackingTouch(SeekBar seekBar) {              
             }
             
-            @Override
             public void onStartTrackingTouch(SeekBar seekBar) {             
             }
             
-            @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 float level = (float)progress/100;
                 //change the brightness text value
@@ -52,14 +49,12 @@ public class BrightnessDialog extends Dialog {
         seekBar.setOnSeekBarChangeListener(onSeekListen);
         Button saveButton = (Button) findViewById(R.id.buttonok);
         saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
             public void onClick(View v) {
                 Save();
             }
         });
         Button cancelButton = (Button) findViewById(R.id.buttoncancel);
         cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
             public void onClick(View v) {
                 Cancel();
             }

@@ -86,7 +86,6 @@ public class RegionActivity extends ListActivity {
         progressDialog.setCancelable(true);
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
             public void onCancel(DialogInterface dialog) {
                 regDl.cancel(true);
                 Toast.makeText(context, region+" download canceled!", Toast.LENGTH_LONG).show();
@@ -104,7 +103,6 @@ public class RegionActivity extends ListActivity {
         deleteRegion = region;
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             
-            @Override
             public void onClick(DialogInterface dialog, int which) {
                 RegionActivity.this.StartDownload(region, regionMegaBytes);
                 return;
@@ -112,7 +110,6 @@ public class RegionActivity extends ListActivity {
         });
         
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
             public void onClick(DialogInterface dialog, int which) {
                 return;
             }
@@ -129,7 +126,6 @@ public class RegionActivity extends ListActivity {
         deleteRegion = region;
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             
-            @Override
             public void onClick(DialogInterface dialog, int which) {
                 File deleteMe = new File(Environment.getExternalStorageDirectory()+"/mxmariner/"+deleteRegion+".gemf");
                 deleteMe.delete();
@@ -143,7 +139,6 @@ public class RegionActivity extends ListActivity {
         });
         
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
             public void onClick(DialogInterface dialog, int which) {
                 deleteRegion = null;
                 return;
@@ -163,7 +158,6 @@ public class RegionActivity extends ListActivity {
         		"This region is %sMB in size.", availMegaBytes, regionMegaBytes));
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             
-            @Override
             public void onClick(DialogInterface dialog, int which) {
                 return;
             }
