@@ -371,7 +371,7 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
         mRunOnFirstFix.clear();
         
         sogTxt.setText(String.valueOf((double)Math.round(location.getSpeed()*1.94 * 100) / 100 )+"kts | ");
-        cogTxt.setText(String.valueOf(location.getBearing())+"� ");
+        cogTxt.setText(String.valueOf(location.getBearing())+"\u00B0 ");
         
     }
 

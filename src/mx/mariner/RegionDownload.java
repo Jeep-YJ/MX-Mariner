@@ -103,12 +103,7 @@ public class RegionDownload extends AsyncTask<String, Integer, String> {
     }
     
     protected void onPostExecute(String result){
-        //set selected region to the one just downloaded
-//        SharedPreferences.Editor editor = prefs.edit();
-//        editor.putString("PrefChartLocation", region);
-//        editor.commit();
-//        progressDialog.dismiss();
-        
+        //restart the activity
         //close the database
         regiondb.close();
         

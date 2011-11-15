@@ -3,7 +3,6 @@ package mx.mariner;
 import android.app.Dialog;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
@@ -12,9 +11,8 @@ import android.widget.ToggleButton;
 public class DisplayMode extends Dialog {
     MapActivity context;
     private boolean init1 = true;
-    private boolean init2 = true;
 
-    public DisplayMode(final MapActivity context, final String[] regionItems) {
+    public DisplayMode(final MapActivity context) {
         super(context);
         this.context = context;
         this.setContentView(R.layout.map_mode);
@@ -53,38 +51,10 @@ public class DisplayMode extends Dialog {
             }
         });
         
-        //final String[] items = new GemfCollection().getFileList();
-        Spinner regionSpinner = (Spinner) findViewById(R.id.spinnerRegion);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, 
-                android.R.layout.simple_spinner_item, regionItems);
-        regionSpinner.setAdapter(adapter);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        regionSpinner.setSelection( Search(regionItems, context.prefs.getString("PrefChartLocation", "None")) );
-        regionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> arg0, View arg1,
-                    int arg2, long arg3) {
-                if (!init2) //keep from executing twice
-                    context.changeChartRegion(regionItems[arg2]);
-                else
-                	init2 = false;
-            }
-            public void onNothingSelected(AdapterView<?> arg0) {
-                //Auto-generated method stub
-            }     
-        });
     }
     
     public void Ok() {
         this.dismiss();
     }
     
-    private int Search(String[] arg0, String arg1) {
-    	for (int i=0; i<arg0.length; i++ ) {
-    		if ( arg0[i].equals(arg1) )
-    			return i;
-    	}
-    	return 0;
-	}
-    
-
 }

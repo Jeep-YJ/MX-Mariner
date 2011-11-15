@@ -74,7 +74,7 @@ public final class R {
         public static final int btnFollow=0x7f09000f;
         public static final int btnZoomIn=0x7f09000d;
         public static final int btnZoomOut=0x7f09000e;
-        public static final int buttonOK=0x7f090013;
+        public static final int buttonOK=0x7f090012;
         public static final int buttoncancel=0x7f090004;
         public static final int buttonok=0x7f090003;
         public static final int cog=0x7f09000b;
@@ -83,19 +83,18 @@ public final class R {
         public static final int imageView1=0x7f090002;
         public static final int linearLayout_buttons=0x7f09000c;
         public static final int linearLayout_hud=0x7f090007;
-        public static final int mapmode=0x7f090019;
+        public static final int mapmode=0x7f090018;
         public static final int mapview=0x7f090005;
-        public static final int quit=0x7f09001b;
-        public static final int regiondesc=0x7f090016;
-        public static final int regionicon=0x7f090014;
-        public static final int regionname=0x7f090015;
-        public static final int regionsize=0x7f090017;
-        public static final int regionstatus=0x7f090018;
-        public static final int settings=0x7f09001a;
+        public static final int quit=0x7f09001a;
+        public static final int regiondesc=0x7f090015;
+        public static final int regionicon=0x7f090013;
+        public static final int regionname=0x7f090014;
+        public static final int regionsize=0x7f090016;
+        public static final int regionstatus=0x7f090017;
+        public static final int settings=0x7f090019;
         public static final int sog=0x7f090009;
         public static final int sog_label=0x7f090008;
-        public static final int spinnerBrightness=0x7f090012;
-        public static final int spinnerRegion=0x7f090011;
+        public static final int spinnerBrightness=0x7f090011;
         public static final int toggleChart=0x7f090010;
     }
     public static final class layout {
@@ -115,10 +114,13 @@ public final class R {
         public static final int copyright=0x7f06000c;
         public static final int credits=0x7f06000a;
         public static final int data_path=0x7f060002;
+        public static final int displaymode=0x7f06000d;
         public static final int http_pass=0x7f060004;
         public static final int http_user=0x7f060003;
         public static final int nav_warning=0x7f06000b;
+        public static final int quit=0x7f06000f;
         public static final int region_url=0x7f060001;
+        public static final int settings=0x7f06000e;
         public static final int sql_charts_table=0x7f060006;
         public static final int sql_regions_table=0x7f060005;
         public static final int update_url=0x7f060000;

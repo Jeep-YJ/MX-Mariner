@@ -73,11 +73,17 @@ public class RegionActivity extends ListActivity {
         
     }
     
+    @Override
+    public void onPause() {
+        regiondb.close();
+        super.onPause();
+    }
+    
     private void StartDownload(final String region, String regionMegaBytes) {
         progressDialog.setMessage( String.format("Downloading %s (%sMB)...\n" +
-        		"Please be patient. This may take a few minutes.\n\n" +
-        		"Use your back button to cancel.\n",
-        		region, regionMegaBytes) );
+                "Please be patient. This may take a few minutes.\n\n" +
+                "Use your back button to cancel.\n",
+                region, regionMegaBytes) );
         progressDialog.setIndeterminate(false);
         progressDialog.setMax(100);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -98,8 +104,8 @@ public class RegionActivity extends ListActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle( String.format("Download %s ?", region) );
         builder.setMessage( String.format("%s (%sMB) will be downloaded.\n" +
-        		"You may want to connect to wifi  before proceding.\n" +
-        		"Please be patient. This may take a few minutes.", region, regionMegaBytes));
+                "You may want to connect to wifi  before proceding.\n" +
+                "Please be patient. This may take a few minutes.", region, regionMegaBytes));
         deleteRegion = region;
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             
@@ -155,7 +161,7 @@ public class RegionActivity extends ListActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle( "Not enough space!" );
         builder.setMessage( String.format("Your external storage only has %sMB available. \n" +
-        		"This region is %sMB in size.", availMegaBytes, regionMegaBytes));
+                "This region is %sMB in size.", availMegaBytes, regionMegaBytes));
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             
             public void onClick(DialogInterface dialog, int which) {
@@ -168,6 +174,7 @@ public class RegionActivity extends ListActivity {
     }
     
     public void Restart() {
+        regiondb.close();
         Intent intent = getIntent();
         finish();
         startActivity(intent);

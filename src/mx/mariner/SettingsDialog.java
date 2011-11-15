@@ -33,7 +33,7 @@ public class SettingsDialog extends PreferenceActivity {
             public boolean onPreferenceClick(Preference preference) {
                 startActivity(new Intent(getBaseContext(), RegionActivity.class));
                 return true;
-            } 
+            }
         });
         
         Preference about = (Preference) this.findPreference("About");
@@ -116,7 +116,7 @@ public class SettingsDialog extends PreferenceActivity {
         alert.show();
     }
     
-    protected static void ShowWarning(Context context) {
+    private static void ShowWarning(Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Warning");
         builder.setIcon(R.drawable.icon);
