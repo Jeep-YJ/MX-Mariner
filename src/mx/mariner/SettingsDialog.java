@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
@@ -24,6 +25,9 @@ public class SettingsDialog extends PreferenceActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
+        
+        SQLiteDatabase regiondb = (new RegionDbHelper(this)).getWritableDatabase();
+        new RegionUpdateCheck(regiondb, this).execute();
         
         context = this;
         
@@ -98,6 +102,13 @@ public class SettingsDialog extends PreferenceActivity {
             } 
         });
         
+    }
+    
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this, MapActivity.class));
+        finish();
+        return;
     }
     
     private void ShowAbout() {

@@ -6,6 +6,7 @@ package mx.mariner;
 
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.ResourceProxy;
+import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.tilesource.bing.BingMapTileSource;
@@ -16,13 +17,11 @@ import org.osmdroid.views.overlay.ScaleBarOverlay;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -31,7 +30,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 public class MapActivity extends Activity {
     
@@ -40,7 +38,7 @@ public class MapActivity extends Activity {
     //====================
     
     protected final int RASTERCHARTLAYER = 0;
-    private final String tag = "MXM";
+    //private final String tag = "MXM";
     
     //====================
     // Fields
@@ -53,19 +51,12 @@ public class MapActivity extends Activity {
     protected ScaleBarOverlay mScaleBarOverlay;
     protected ResourceProxy mResourceProxy;
     protected int dayDuskNight; //0-day, 1-dusk, 2-night
-    //private IArchiveFile[] myArchives;
-    //private MxmBitmapTileSourceBase mBitmapTileSourceBase;
-    //private MapTileModuleProviderBase[] myProviders = new MapTileModuleProviderBase[1];
-    //private MapTileProviderArray myGemfTileProvider;
-    //private TilesOverlay myGemfOverlay;
     protected SharedPreferences prefs;
     protected SharedPreferences.Editor editor;
-    //private GemfCollection gemfCollection;
+    protected GemfCollection gemfCollection; //gets refreshed when ChartOverlays task executes
     private int start_lat; //geopoint
     private int start_lon; //geopoint
     private int start_zoom;
-    //private String regiondir = Environment.getExternalStorageDirectory()+"/mxmariner/";
-    //private ChartOutlines chartOutlines = new ChartOutlines();
     private Button btnZoomIn;
     private Button btnZoomOut;
     private Button btnFollow;
@@ -73,6 +64,7 @@ public class MapActivity extends Activity {
     private BingMapTileSource bingMapTileSource;
     protected AlertDialog warningAlert;
     private static AlertDialog.Builder warningDialog;
+    protected MapTileModuleProviderBase[] myProviders = new MapTileModuleProviderBase[1];
     
     //====================
     // Methods
@@ -93,7 +85,6 @@ public class MapActivity extends Activity {
     }
     
     protected void StorePreferences(Boolean warning) {
-        //SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("Warning", warning);
         editor.putInt("Latitude", mapView.getMapCenter().getLatitudeE6());
         editor.putInt("Longitude", mapView.getMapCenter().getLongitudeE6());
@@ -133,21 +124,8 @@ public class MapActivity extends Activity {
         }
     };
     
-    private void gemfOverlayAll() {
-        GemfOverlayAll goa = new GemfOverlayAll(this);
-        goa.execute();
-    }
-    
-    protected void toggleChartLayer() {
-        if (!prefs.getBoolean("UseChartOverlay", true)) {
-            mapView.getOverlays().remove(RASTERCHARTLAYER);
-            Toast.makeText(this, "Charts Layer: Off", Toast.LENGTH_SHORT).show();
-            mapView.postInvalidate();
-        } else {
-            mapView.getOverlays().clear();
-            gemfOverlayAll();
-            Toast.makeText(this, "Charts Layer: On", Toast.LENGTH_SHORT).show();
-        }
+    protected void refeshChartLayer() {
+        new ChartOverlays(this);
     }
     
     protected void setBrightMode() {
@@ -167,7 +145,6 @@ public class MapActivity extends Activity {
                 float dusk = prefs.getFloat("DuskBright", (float) 0.1);
                 layoutParams.screenBrightness = dusk;
                 getWindow().setAttributes(layoutParams);
-                //Toast.makeText(this, "Dusk Mode", Toast.LENGTH_SHORT).show();
                 break;
                 
             case 2:
@@ -175,14 +152,8 @@ public class MapActivity extends Activity {
                 float night = prefs.getFloat("NightBright", (float) 0.05);
                 layoutParams.screenBrightness = night;
                 getWindow().setAttributes(layoutParams);
-                //Toast.makeText(this, "Night Mode", Toast.LENGTH_SHORT).show();
                 break;
         }
-    }
-    
-    public void fullexit() {
-        int pid = android.os.Process.myPid();
-        android.os.Process.killProcess(pid);
     }
     
     //====================
@@ -225,7 +196,6 @@ public class MapActivity extends Activity {
         
         //location overlay setup
         mLocationOverlay = new MxmMyLocationOverlay(this, mapView, mActivity, mResourceProxy);
-        //mLocationOverlay.enableMyLocation();
         
         //scale-bar overlay setup
         mScaleBarOverlay = new ScaleBarOverlay(this);
@@ -244,60 +214,37 @@ public class MapActivity extends Activity {
         
         //settings
         mapView.setKeepScreenOn(true);
-        //setBrightMode(dayDuskNight);
         
         warningDialog = new AlertDialog.Builder(this);
         warningDialog.setTitle("Warning");
         warningDialog.setIcon(R.drawable.icon);
         warningDialog.setMessage(getResources().getString(R.string.nav_warning));
+        warningDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                return;
+            }
+        }); 
         warningAlert = warningDialog.create();
         if (warning)
             warningAlert.show();
         
-        //TODO: this needs to be moved to an async task with progress bar
-        //look for gemf files that have installeddate of 0 in database
-        //execute cached sql/dat for missing files if it exists
-//        SQLiteDatabase regiondb = (new RegionDbHelper(this)).getWritableDatabase();
-//        String[] zeroDate = new ChartDataStore(regiondb).GetUninstalledRegions();
-//        GemfCollection gemfCollection = new GemfCollection();
-//        String[] missing = GemfCollection.lstUnion(gemfCollection.getRegionList(), zeroDate);
-//        for (int i=0; i<missing.length; i++) {
-//            try {
-//                for (String line:ReadFile.readLines(missing[i]))
-//                    regiondb.execSQL(line);
-//            } catch (IOException e) {
-//                Log.e(tag, e.getMessage());
-//            }  
-//        }
-//        regiondb.close();
     }
-    
-//    @Override
-//    public void onConfigurationChanged (Configuration newConfig) {
-//        Log.i(tag, "Orientation changed... restarting activity");
-//        StorePreferences(false);
-//        //there may be a better way to fix out of memory error but this does seem to work
-//        //http://groups.google.com/group/osmdroid/browse_thread/thread/d6918e3e46c40504/30e9bf54eb1e5e83?show_docid=30e9bf54eb1e5e83&pli=1
-//        Intent intent = getIntent();
-//        int pid = android.os.Process.myPid();
-//        finish();
-//        startActivity(intent);
-//        android.os.Process.killProcess(pid);
-//    }
     
     @Override
     public void onPause() {
         StorePreferences(false);
-        this.mLocationOverlay.disableMyLocation();
-        mapView.getOverlays().clear();
-        super.onPause();
+        //completely kill this activity so base map gets reset
+        int pid = android.os.Process.myPid();
+        android.os.Process.killProcess(pid);
     }
     
-    protected void addMapLayers() {
-        //overlay selected region
-        if (prefs.getBoolean("UseChartOverlay", true)) {
-            gemfOverlayAll();
-        }
+    @Override
+    public void onBackPressed() {
+        StorePreferences(true);
+        //completely kill this activity
+        int pid = android.os.Process.myPid();
+        android.os.Process.killProcess(pid);
+        return;
     }
     
     @Override
@@ -309,7 +256,8 @@ public class MapActivity extends Activity {
         else
             bingMapTileSource.setStyle(BingMapTileSource.IMAGERYSET_AERIALWITHLABELS);
         
-        addMapLayers();
+        new ChartOverlays(this);
+        
         //setup buttons according to preferences
         LinearLayout llb = (LinearLayout) this.findViewById(R.id.linearLayout_buttons);
         llb.removeView(btnZoomIn);
@@ -342,26 +290,18 @@ public class MapActivity extends Activity {
         switch (item.getItemId()) 
         {
             case R.id.mapmode:
-                Log.d(tag, "Showing Display Mode");
-                DisplayMode displayMode = new DisplayMode(this);
+                String[] regionItems = {"None"};
+                if (gemfCollection.getFileList().length > 0)
+                    regionItems = gemfCollection.getFileList();
+                DisplayMode displayMode = new DisplayMode(this, regionItems);
                 displayMode.setTitle( this.getResources().getString(R.string.displaymode) );
                 displayMode.setCanceledOnTouchOutside(false);
-                displayMode.setCancelable(false);
+                displayMode.setCancelable(true);
                 displayMode.show();
-                //ddnChange();
                 return true;
                 
             case R.id.settings:
-                Log.d(tag, "Showing Settings");
-                SQLiteDatabase regiondb = (new RegionDbHelper(this)).getWritableDatabase();
-                new RegionUpdateCheck(regiondb, this).execute();
                 startActivity(new Intent(this, SettingsDialog.class));
-                return true;
-            
-            case R.id.quit:
-                Log.d(tag, "Quitting");
-                StorePreferences(true);
-                fullexit();
                 return true;
                 
             default:
