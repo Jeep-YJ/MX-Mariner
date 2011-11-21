@@ -31,19 +31,27 @@ public class ChartOverlays {
     // Constructor
     //====================
     
-    public ChartOverlays(MapActivity context) {
-        context.mapView.getOverlays().clear();
+    public ChartOverlays(MapActivity mapActivity) {
+        mapActivity.mapView.getOverlays().clear();
         
-        context.gemfCollection = new GemfCollection();
-        String region = context.prefs.getString("PrefChartLocation", "None");
+        mapActivity.gemfCollection = new GemfCollection();
+        String region = mapActivity.prefs.getString("PrefChartLocation", "None");
         String regiondir = Environment.getExternalStorageDirectory()+"/mxmariner/";
         String regionPath = regiondir+region+".gemf";
         Log.i(tag, "Loading raster chart archive: " + regionPath );
+        
         File regionFile = new File(regionPath);
+        
+        if (!regionFile.exists() && mapActivity.gemfCollection.getFileList().length>0) {
+            Log.i(tag, "Prefered region does not exist, using first one found");
+            region = mapActivity.gemfCollection.getFileList()[0];
+            regionPath = regiondir+region+".gemf";
+            regionFile = new File(regionPath);
+        }
         
         try {
             
-            if (context.prefs.getBoolean("UseChartOverlay", true)) {
+            if (mapActivity.prefs.getBoolean("UseChartOverlay", true)) {
                 //get zoom levels
                 GEMFFile gemf = new GEMFFile(regionPath);
                 int maxZoom = (Integer) gemf.getZoomLevels().toArray()[0];
@@ -53,29 +61,29 @@ public class ChartOverlays {
                 IArchiveFile[] myArchives = new IArchiveFile[1];
                 myArchives[0] = GEMFFileArchive.getGEMFFileArchive(regionFile);
                 MxmBitmapTileSourceBase mBitmapTileSourceBase = new MxmBitmapTileSourceBase("RasterCharts", null, minZoom, maxZoom, 256, ".png");
-                context.myProviders[0] = new MapTileFileArchiveProvider(new SimpleRegisterReceiver(context), mBitmapTileSourceBase, myArchives);
-                MapTileProviderArray myGemfTileProvider = new MapTileProviderArray(mBitmapTileSourceBase, null, context.myProviders);
-                TilesOverlay myGemfOverlay = new TilesOverlay(myGemfTileProvider, context);
+                mapActivity.myProviders[0] = new MapTileFileArchiveProvider(new SimpleRegisterReceiver(mapActivity), mBitmapTileSourceBase, myArchives);
+                MapTileProviderArray myGemfTileProvider = new MapTileProviderArray(mBitmapTileSourceBase, null, mapActivity.myProviders);
+                TilesOverlay myGemfOverlay = new TilesOverlay(myGemfTileProvider, mapActivity);
                 myGemfOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
-                context.mapView.getOverlays().add(myGemfOverlay);
+                mapActivity.mapView.getOverlays().add(myGemfOverlay);
             }
             
             //chart outlines
             ChartOutlines chartOutlines = new ChartOutlines();
             chartOutlines.clearPaths();
             
-            if (context.prefs.getBoolean("OutlinePref", true)){
-                SQLiteDatabase regiondb = (new RegionDbHelper(context)).getReadableDatabase();
+            if (mapActivity.prefs.getBoolean("OutlinePref", true)){
+                SQLiteDatabase regiondb = (new RegionDbHelper(mapActivity)).getReadableDatabase();
                 ChartDataStore datastore = new ChartDataStore(regiondb);
                 for (String coordinates : datastore.getOutlines(region)){
-                    chartOutlines.addPathOverlay(Color.rgb(69, 172, 137), context.mResourceProxy, coordinates);
+                    chartOutlines.addPathOverlay(Color.rgb(69, 172, 137), mapActivity.mResourceProxy, coordinates);
                 }
                 regiondb.close();
                 LinkedList<Overlay> collection = new LinkedList<Overlay>();
                 for (Object path : chartOutlines.getPaths()) {
                     collection.add( (Overlay) path);
                 }
-                context.mapView.getOverlays().addAll(collection);
+                mapActivity.mapView.getOverlays().addAll(collection);
             }
             
             } catch (FileNotFoundException e) {
@@ -84,36 +92,19 @@ public class ChartOverlays {
                 Log.e(tag, e.getMessage());
         }
     
-        if (context.prefs.getBoolean("UseChartOverlay", true)) {
+        if (mapActivity.prefs.getBoolean("UseChartOverlay", true)) {
             
         }
         
         //location overlay
-        context.mapView.getOverlays().add(context.mLocationOverlay);
+        mapActivity.mapView.getOverlays().add(mapActivity.mLocationOverlay);
         
         //scalebar overlay
-        context.mapView.getOverlays().add(context.mScaleBarOverlay);
+        mapActivity.mapView.getOverlays().add(mapActivity.mScaleBarOverlay);
         
         //refresh view delayed so gemf gets fully drawn
-        context.mapView.postInvalidateDelayed(500);
+        mapActivity.mapView.postInvalidateDelayed(750);
         
     }
     
 }
-
-//TODO: 
-//look for gemf files that have installeddate of 0 in database
-//execute cached sql/dat for missing files if it exists
-//SQLiteDatabase regiondb = (new RegionDbHelper(this)).getWritableDatabase();
-//String[] zeroDate = new ChartDataStore(regiondb).GetUninstalledRegions();
-//GemfCollection gemfCollection = new GemfCollection();
-//String[] missing = GemfCollection.lstUnion(gemfCollection.getRegionList(), zeroDate);
-//for (int i=0; i<missing.length; i++) {
-//    try {
-//        for (String line:ReadFile.readLines(missing[i]))
-//            regiondb.execSQL(line);
-//    } catch (IOException e) {
-//        Log.e(tag, e.getMessage());
-//    }  
-//}
-//regiondb.close();

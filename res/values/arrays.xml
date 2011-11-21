@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="default_base_map">Road Map</string>
     <string-array name="base_maps">
         <item>Road Map</item>
         <item>Satellite</item>
     </string-array>
     <string-array name="screen_modes">
-        <item>Day Mode</item>
-        <item>Dusk Mode</item>
-        <item>Night Mode</item>
+        <item>Day</item>
+        <item>Dusk</item>
+        <item>Night</item>
     </string-array>
 </resources>

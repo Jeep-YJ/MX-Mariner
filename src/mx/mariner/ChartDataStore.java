@@ -71,7 +71,7 @@ public class ChartDataStore {
             cursor.moveToNext();
         }
         cursor.close();
-        return (String[]) uninstalled.toArray();
+        return uninstalled.toArray(new String[uninstalled.size()]);
     }
     
 }

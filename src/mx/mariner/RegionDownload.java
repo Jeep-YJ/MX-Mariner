@@ -17,16 +17,17 @@ import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.Intent;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
-public class RegionDownload extends AsyncTask<String, Integer, String> {
+public class RegionDownload extends AsyncTask<Void, Integer, Void> {
     private static final int TIMEOUT = 0;
     private static String USER;
     private static String PASS;
@@ -37,56 +38,68 @@ public class RegionDownload extends AsyncTask<String, Integer, String> {
     private String gemfFilePath;  //where region gemf will be stored
     private String sqlUrl; //where region sql will be fetched from
     private String gemfUrl; //where region will be fetched from
-    //private String region;
-    private Activity parent;
-    
-    //private SharedPreferences prefs;
-    protected ProgressDialog progressDialog;
-    
+    private String region;
+    private String regionMegabytes;
+    private RegionActivity regionActivity;
+    private ProgressDialog progressDialog;
     private SQLiteDatabase regiondb;
     
-    protected RegionDownload(Context context, SQLiteDatabase regiondb, String region, 
-             ProgressDialog progressDialog, Activity activity) {
+    protected RegionDownload(SQLiteDatabase regiondb, String region, String regionMegaBytes, RegionActivity regionActivity) {
         this.regiondb = regiondb;
+        this.region = region;
+        this.regionMegabytes = regionMegaBytes;
         this.sqlFilePath = Environment.getExternalStorageDirectory()+"/mxmariner/"+region+".data";
         this.gemfPartPath = Environment.getExternalStorageDirectory()+"/mxmariner/"+region+".part";
         this.gemfFilePath = Environment.getExternalStorageDirectory()+"/mxmariner/"+region+".gemf";
-        this.sqlUrl = context.getString(R.string.region_url)+region+".sql";
-        this.gemfUrl = context.getString(R.string.region_url)+region+".gemf";
-        this.progressDialog = progressDialog;
-        this.parent = activity;
-        //this.region = region;
-        USER = context.getString(R.string.http_user);
-        PASS = context.getString(R.string.http_pass);
+        this.regionActivity = regionActivity;
+        this.sqlUrl = regionActivity.getString(R.string.region_url)+region+".sql";
+        this.gemfUrl = regionActivity.getString(R.string.region_url)+region+".gemf";
+        USER = regionActivity.getString(R.string.http_user);
+        PASS = regionActivity.getString(R.string.http_pass);
+        progressDialog = new ProgressDialog(regionActivity);
     }
     
     @Override
     protected void onPreExecute() {
+        progressDialog.setMessage( String.format("Downloading %s (%sMB)...\n" +
+                "Please be patient. This may take a few minutes.\n\n" +
+                "Use your back button to cancel.\n",
+                region, regionMegabytes) );
+        progressDialog.setIndeterminate(false);
+        progressDialog.setMax(110);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.show();
+        progressDialog.setCancelable(true);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            public void onCancel(DialogInterface dialog) {
+                Toast.makeText(regionActivity, region+" download canceled!", Toast.LENGTH_LONG).show();
+                RegionDownload.this.cancel(true);
+            }
+        });
       }
     
     @Override
-    protected String doInBackground(String... params) {
+    protected Void doInBackground(Void... params) {
+        //fetch gemf and data files
         if (getFileFromUrl(gemfPartPath, gemfUrl, true)) {
             File from = new File(gemfPartPath);
             File to = new File(gemfFilePath);
             from.renameTo(to);
-
+            
+            //install data file
             if (getFileFromUrl(sqlFilePath, sqlUrl, false)) {
                 try {
                     ArrayList<String> sql = ReadFile.readLines(sqlFilePath);
                     Log.i("MXM", "installing region chart data");
-                    float increment = (float) (5.0/sql.size());
-                    float progress = (float) 95.0;
+                    
+                    float increment = (float) (10.0/sql.size());
+                    float progress = (float) 100.0;
                     for (String line:sql) {
                         progress += increment;
                         publishProgress((int) progress);
                         regiondb.execSQL(line);
                     }
-                    
-                    //File file = new File(sqlFilePath);
-                    //if (file.delete())
-                        //Log.i(tag, "deleted file:"+sqlFilePath);
                     
                 } catch (IOException e) {
                     Log.e("MXM", e.getMessage());
@@ -98,19 +111,19 @@ public class RegionDownload extends AsyncTask<String, Integer, String> {
     
     protected void onProgressUpdate(Integer... progress){
         progressDialog.setProgress(progress[0]);
-        if (progress[0] == 95)
-            progressDialog.setMessage("Installing data");
+        if (progress[0]==100) {
+            progressDialog.setCancelable(false);
+            progressDialog.setMessage( String.format("Installing %s data.", region) );
+        }
     }
     
-    protected void onPostExecute(String result){
-        //restart the activity
-        //close the database
-        regiondb.close();
-        
-        //restart parent activity
-        Intent intent = parent.getIntent();
-        parent.finish();
-        parent.startActivity(intent);
+    protected void onPostExecute(Void result){
+        progressDialog.dismiss(); //memory will leak w/o this
+        regionActivity.Restart();
+        //select downloaded region
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(regionActivity).edit();
+        editor.putString("PrefChartLocation", region);
+        editor.commit();
     }
 
     private boolean getFileFromUrl(String filePath, String urlString, boolean publish) {
@@ -149,7 +162,7 @@ public class RegionDownload extends AsyncTask<String, Integer, String> {
             while ((count = input.read(data)) != -1) {
                 total += count;
                 if (publish)
-                    publishProgress((int)(total*100/size)-5);
+                    publishProgress((int)(total*100/size));
                 output.write(data, 0, count);
             }
 

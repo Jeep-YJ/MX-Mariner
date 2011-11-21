@@ -60,7 +60,7 @@ public class MapActivity extends Activity {
     private Button btnZoomIn;
     private Button btnZoomOut;
     private Button btnFollow;
-    private boolean warning;
+    protected boolean warning;
     private BingMapTileSource bingMapTileSource;
     protected AlertDialog warningAlert;
     private static AlertDialog.Builder warningDialog;
@@ -92,7 +92,6 @@ public class MapActivity extends Activity {
         editor.putInt("DDN", dayDuskNight);
         editor.commit();
     }
-
     private View.OnClickListener ZoomInListener = new View.OnClickListener() {
         public void onClick(View v) {
             //is there a better way?...zoom during follow is screwed up otherwise
@@ -164,7 +163,22 @@ public class MapActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        
+        warningDialog = new AlertDialog.Builder(this);
+        warningDialog.setTitle("Warning");
+        warningDialog.setIcon(R.drawable.icon);
+        warningDialog.setMessage(getResources().getString(R.string.nav_warning));
+        warningDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                return;
+            }
+        }); 
+        warningAlert = warningDialog.create();
+        
         SetPreferences(PreferenceManager.getDefaultSharedPreferences(this)); //initial position, zoom
+        
+        Orphans orphans = new Orphans(this);
+        orphans.execute();
         
         mapView = (MapView) findViewById(R.id.mapview);
         mActivity = this;
@@ -178,7 +192,7 @@ public class MapActivity extends Activity {
             TileSourceFactory.addTileSource(bingMapTileSource);
         }
         
-        String defStyle = this.getResources().getStringArray(R.array.base_maps)[0];
+        String defStyle = this.getResources().getString(R.string.default_base_map);
         if (prefs.getString("BaseMapSetting", defStyle).equals(defStyle))
             bingMapTileSource.setStyle(BingMapTileSource.IMAGERYSET_ROAD);
         else
@@ -215,19 +229,9 @@ public class MapActivity extends Activity {
         //settings
         mapView.setKeepScreenOn(true);
         
-        warningDialog = new AlertDialog.Builder(this);
-        warningDialog.setTitle("Warning");
-        warningDialog.setIcon(R.drawable.icon);
-        warningDialog.setMessage(getResources().getString(R.string.nav_warning));
-        warningDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                return;
-            }
-        }); 
-        warningAlert = warningDialog.create();
-        if (warning)
-            warningAlert.show();
         
+        if (warning && !orphans.progressDialog.isShowing())
+            warningAlert.show();
     }
     
     @Override
@@ -250,12 +254,14 @@ public class MapActivity extends Activity {
     @Override
     public void onResume() {
         mLocationOverlay.enableMyLocation();
+        
         String defStyle = this.getResources().getStringArray(R.array.base_maps)[0];
         if (prefs.getString("BaseMapSetting", defStyle).equals(defStyle))
             bingMapTileSource.setStyle(BingMapTileSource.IMAGERYSET_ROAD);
         else
             bingMapTileSource.setStyle(BingMapTileSource.IMAGERYSET_AERIALWITHLABELS);
         
+        //TODO: we are doing this twice oncreate
         new ChartOverlays(this);
         
         //setup buttons according to preferences
@@ -287,6 +293,9 @@ public class MapActivity extends Activity {
     //andriod menu items
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent settings = new Intent(this, SettingsDialog.class);
+        Intent help = new Intent(this, Help.class);
+        
         switch (item.getItemId()) 
         {
             case R.id.mapmode:
@@ -301,11 +310,15 @@ public class MapActivity extends Activity {
                 return true;
                 
             case R.id.settings:
-                startActivity(new Intent(this, SettingsDialog.class));
+                startActivity(settings);
+                return true;
+                
+            case R.id.help:
+                startActivity(help);
                 return true;
                 
             default:
-                return super.onOptionsItemSelected(item);
+                return true;
         }
     }
     

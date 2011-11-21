@@ -98,7 +98,7 @@ public class GemfCollection {
         Arrays.sort(gemfList);
         
         //get list of files ending in .dat
-        datList = filenameFilter(".dat");
+        datList = filenameFilter(".data");
         Arrays.sort(datList);
         
         //make sure .gemf has corresponding .dat file
@@ -155,7 +155,7 @@ public class GemfCollection {
     }
     
     public String getDir() {
-        return gemfDir;
+        return gemfDir+"/";
     }
     
     public int getMinZoom() {

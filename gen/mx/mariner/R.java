@@ -9,21 +9,21 @@ package mx.mariner;
 
 public final class R {
     public static final class array {
-        public static final int base_maps=0x7f050000;
+        public static final int base_maps=0x7f060000;
         /**  initial values when db is created 
          */
-        public static final int region_bytes=0x7f050005;
+        public static final int region_bytes=0x7f060005;
         /**  initial values when db is created 
          */
-        public static final int region_dates=0x7f050006;
+        public static final int region_dates=0x7f060006;
         /**  initial values when db is created 
          */
-        public static final int region_descriptions=0x7f050004;
-        public static final int region_icons=0x7f050003;
+        public static final int region_descriptions=0x7f060004;
+        public static final int region_icons=0x7f060003;
         /**  initial values when db is created 
          */
-        public static final int region_names=0x7f050002;
-        public static final int screen_modes=0x7f050001;
+        public static final int region_names=0x7f060002;
+        public static final int screen_modes=0x7f060001;
     }
     public static final class attr {
     }
@@ -81,49 +81,55 @@ public final class R {
         public static final int cog=0x7f09000b;
         public static final int cog_label=0x7f09000a;
         public static final int ddnMask=0x7f090006;
+        public static final int help=0x7f09001c;
         public static final int imageView1=0x7f090002;
         public static final int linearLayout_buttons=0x7f09000c;
         public static final int linearLayout_hud=0x7f090007;
-        public static final int mapmode=0x7f090019;
+        public static final int mapmode=0x7f09001a;
         public static final int mapview=0x7f090005;
         public static final int regiondesc=0x7f090016;
         public static final int regionicon=0x7f090014;
         public static final int regionname=0x7f090015;
         public static final int regionsize=0x7f090017;
         public static final int regionstatus=0x7f090018;
-        public static final int settings=0x7f09001a;
+        public static final int settings=0x7f09001b;
         public static final int sog=0x7f090009;
         public static final int sog_label=0x7f090008;
         public static final int spinnerBrightness=0x7f090012;
         public static final int spinnerRegion=0x7f090011;
         public static final int toggleChart=0x7f090010;
+        public static final int webview=0x7f090019;
     }
     public static final class layout {
         public static final int brightnessdialog=0x7f030000;
         public static final int list_item=0x7f030001;
         public static final int main=0x7f030002;
         public static final int map_mode=0x7f030003;
-        public static final int region_list_item=0x7f030004;
+        public static final int orphanloader=0x7f030004;
+        public static final int region_list_item=0x7f030005;
+        public static final int webview=0x7f030006;
     }
     public static final class menu {
         public static final int options_menu=0x7f080000;
     }
     public static final class string {
-        public static final int app_buildno=0x7f060009;
-        public static final int app_name=0x7f060007;
-        public static final int app_version=0x7f060008;
-        public static final int copyright=0x7f06000c;
-        public static final int credits=0x7f06000a;
-        public static final int data_path=0x7f060002;
-        public static final int displaymode=0x7f06000d;
-        public static final int http_pass=0x7f060004;
-        public static final int http_user=0x7f060003;
-        public static final int nav_warning=0x7f06000b;
-        public static final int region_url=0x7f060001;
-        public static final int settings=0x7f06000e;
-        public static final int sql_charts_table=0x7f060006;
-        public static final int sql_regions_table=0x7f060005;
-        public static final int update_url=0x7f060000;
+        public static final int app_buildno=0x7f05000a;
+        public static final int app_name=0x7f050008;
+        public static final int app_version=0x7f050009;
+        public static final int copyright=0x7f05000d;
+        public static final int credits=0x7f05000b;
+        public static final int data_path=0x7f050003;
+        public static final int default_base_map=0x7f050000;
+        public static final int displaymode=0x7f05000e;
+        public static final int help=0x7f050010;
+        public static final int http_pass=0x7f050005;
+        public static final int http_user=0x7f050004;
+        public static final int nav_warning=0x7f05000c;
+        public static final int region_url=0x7f050002;
+        public static final int settings=0x7f05000f;
+        public static final int sql_charts_table=0x7f050007;
+        public static final int sql_regions_table=0x7f050006;
+        public static final int update_url=0x7f050001;
     }
     public static final class xml {
         public static final int preferences=0x7f040000;

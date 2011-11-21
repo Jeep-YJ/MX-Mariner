@@ -2,9 +2,16 @@
     <item
         android:id="@+id/mapmode"
         android:title="@string/displaymode" 
-        android:icon="@drawable/display"/>
+        android:icon="@drawable/display">
+    </item>
     <item
         android:id="@+id/settings"
         android:title="@string/settings" 
-        android:icon="@drawable/settings"/>
+        android:icon="@drawable/settings">
+    </item>
+    <item
+        android:id="@+id/help"
+        android:title="@string/help" 
+        android:icon="@drawable/about">
+    </item>
 </menu>

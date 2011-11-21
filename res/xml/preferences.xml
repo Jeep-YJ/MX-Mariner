@@ -7,9 +7,9 @@
         <ListPreference 
             android:key="BaseMapSetting" 
             android:summary="Change the online base map style." 
-            android:title="Base Map Layer" 
+            android:title="Base Map Style" 
             android:entries="@array/base_maps" 
-            android:entryValues="@array/base_maps">
+            android:entryValues="@array/base_maps" android:defaultValue="@string/default_base_map">
         </ListPreference>
         <CheckBoxPreference
             android:summary="Toggles chart outlines on or off"

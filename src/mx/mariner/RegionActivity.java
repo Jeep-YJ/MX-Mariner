@@ -8,7 +8,6 @@ import java.io.File;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,12 +19,10 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class RegionActivity extends ListActivity {
     private Context context;
     private SQLiteDatabase regiondb;
-    private ProgressDialog progressDialog;
     private String deleteRegion;
     
     /** Called when the activity is first created. */
@@ -36,7 +33,6 @@ public class RegionActivity extends ListActivity {
         
         regiondb = (new RegionDbHelper(this)).getWritableDatabase();
         
-        progressDialog = new ProgressDialog(this);
         this.setListAdapter(new RegionArrayAdapter(this, new RegionList(context, regiondb).getList()));
         
         ListView listView = getListView();
@@ -74,29 +70,21 @@ public class RegionActivity extends ListActivity {
     }
     
     @Override
+    public void onBackPressed() {
+       regiondb.close();
+       super.onBackPressed();
+    }
+    
+    @Override
     public void onPause() {
-        regiondb.close();
+        //regiondb.close(); closing the db here will cause the region installation to fail if user navigates away during download
+        //moved to onBackPressed()
         super.onPause();
     }
     
-    private void StartDownload(final String region, String regionMegaBytes) {
-        progressDialog.setMessage( String.format("Downloading %s (%sMB)...\n" +
-                "Please be patient. This may take a few minutes.\n\n" +
-                "Use your back button to cancel.\n",
-                region, regionMegaBytes) );
-        progressDialog.setIndeterminate(false);
-        progressDialog.setMax(100);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        final RegionDownload regDl = new RegionDownload(context, regiondb, region, progressDialog, RegionActivity.this);
-        regDl.execute(); //regiondb will be closed
-        progressDialog.setCancelable(true);
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            public void onCancel(DialogInterface dialog) {
-                regDl.cancel(true);
-                Toast.makeText(context, region+" download canceled!", Toast.LENGTH_LONG).show();
-            }
-        });
+    private void StartDownload(String region, String regionMegaBytes) {
+        RegionDownload regDl = new RegionDownload(regiondb, region, regionMegaBytes, this);
+        regDl.execute(); //regiondb will be closed by task
     }
     
     private void ConfirmDownload(final String region, int regionBytes) {
@@ -107,8 +95,8 @@ public class RegionActivity extends ListActivity {
                 "You may want to connect to wifi  before proceding.\n" +
                 "Please be patient. This may take a few minutes.", region, regionMegaBytes));
         deleteRegion = region;
+        
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            
             public void onClick(DialogInterface dialog, int which) {
                 RegionActivity.this.StartDownload(region, regionMegaBytes);
                 return;
@@ -176,6 +164,7 @@ public class RegionActivity extends ListActivity {
     public void Restart() {
         regiondb.close();
         Intent intent = getIntent();
+        //Intent intent = new Intent(getBaseContext(), RegionActivity.class);
         finish();
         startActivity(intent);
     }
