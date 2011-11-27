@@ -4,6 +4,11 @@
         android:title="@string/displaymode" 
         android:icon="@drawable/display">
     </item>
+<!--     <item
+        android:id="@+id/measure"
+        android:title="@string/measure" 
+        android:icon="@drawable/measure">
+    </item> -->
     <item
         android:id="@+id/settings"
         android:title="@string/settings" 

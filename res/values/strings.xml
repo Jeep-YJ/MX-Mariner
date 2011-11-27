@@ -55,6 +55,7 @@ authors and should not be interpreted as representing official policies, either 
 or implied, of WILL KAMP.
     </string>
     <string name="displaymode">Display</string>
+    <string name="measure">Measure</string>
     <string name="settings">Settings</string>
     <string name="help">Help</string>
 </resources>

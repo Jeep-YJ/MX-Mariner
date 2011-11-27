@@ -99,6 +99,9 @@ public class ChartOverlays {
         //location overlay
         mapActivity.mapView.getOverlays().add(mapActivity.mLocationOverlay);
         
+        //measure overlay
+        mapActivity.mapView.getOverlays().add(mapActivity.measureOverlay);
+        
         //scalebar overlay
         mapActivity.mapView.getOverlays().add(mapActivity.mScaleBarOverlay);
         

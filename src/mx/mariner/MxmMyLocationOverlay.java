@@ -408,9 +408,8 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
             if ( mFollow ) {
                 disableFollowLocation();
                 btnFollow.setVisibility(View.VISIBLE);
-            }            
+            }
         }
-
         return super.onTouchEvent(event, mapView);
     }
 

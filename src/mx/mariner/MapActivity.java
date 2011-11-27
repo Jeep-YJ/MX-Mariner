@@ -49,6 +49,7 @@ public class MapActivity extends Activity {
     private Activity mActivity;
     protected MxmMyLocationOverlay mLocationOverlay;
     protected ScaleBarOverlay mScaleBarOverlay;
+    protected MeasureOverlay measureOverlay;
     protected ResourceProxy mResourceProxy;
     protected int dayDuskNight; //0-day, 1-dusk, 2-night
     protected SharedPreferences prefs;
@@ -207,7 +208,6 @@ public class MapActivity extends Activity {
         mapController.setZoom(start_zoom);
         mapController.setCenter(new GeoPoint(start_lat, start_lon));
         
-        
         //location overlay setup
         mLocationOverlay = new MxmMyLocationOverlay(this, mapView, mActivity, mResourceProxy);
         
@@ -217,6 +217,9 @@ public class MapActivity extends Activity {
         mScaleBarOverlay.setLineWidth((float) 3.0);
         mScaleBarOverlay.setTextSize((float) 25.0);
         mScaleBarOverlay.setNautical();
+        
+        //mearure overlay setup
+        measureOverlay = new MeasureOverlay(this);
         
         //buttons
         btnZoomIn = (Button) findViewById(R.id.btnZoomIn);
@@ -228,7 +231,6 @@ public class MapActivity extends Activity {
         
         //settings
         mapView.setKeepScreenOn(true);
-        
         
         if (warning && !orphans.progressDialog.isShowing())
             warningAlert.show();
@@ -261,7 +263,6 @@ public class MapActivity extends Activity {
         else
             bingMapTileSource.setStyle(BingMapTileSource.IMAGERYSET_AERIALWITHLABELS);
         
-        //TODO: we are doing this twice oncreate
         new ChartOverlays(this);
         
         //setup buttons according to preferences
@@ -308,6 +309,10 @@ public class MapActivity extends Activity {
                 displayMode.setCancelable(true);
                 displayMode.show();
                 return true;
+                
+//            case R.id.measure:
+//                measure();
+//                return true;
                 
             case R.id.settings:
                 startActivity(settings);
