@@ -120,8 +120,9 @@ public class RegionDownload extends AsyncTask<Void, Integer, Void> {
     protected void onPostExecute(Void result){
         progressDialog.dismiss(); //memory will leak w/o this
         regionActivity.Restart();
-        //select downloaded region
+        //select downloaded region and tell onresume to refresh gemfCollection
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(regionActivity).edit();
+        editor.putBoolean("RefreshGemf", true);
         editor.putString("PrefChartLocation", region);
         editor.commit();
     }

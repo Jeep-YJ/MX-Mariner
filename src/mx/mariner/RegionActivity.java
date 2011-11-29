@@ -11,9 +11,11 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -33,7 +35,9 @@ public class RegionActivity extends ListActivity {
         
         regiondb = (new RegionDbHelper(this)).getWritableDatabase();
         
-        this.setListAdapter(new RegionArrayAdapter(this, new RegionList(context, regiondb).getList()));
+        RegionArrayAdapter raa = new RegionArrayAdapter(this, new RegionList(context, regiondb).getList());
+        
+        this.setListAdapter(raa);
         
         ListView listView = getListView();
         listView.setTextFilterEnabled(true);
@@ -121,12 +125,24 @@ public class RegionActivity extends ListActivity {
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             
             public void onClick(DialogInterface dialog, int which) {
+                //delete the .gemf file
                 File deleteMe = new File(Environment.getExternalStorageDirectory()+"/mxmariner/"+deleteRegion+".gemf");
                 deleteMe.delete();
+                //remove the sql data
                 String sql1 = "UPDATE regions SET installeddate='0' WHERE name='%s';";
                 String sql2 = "DELETE from charts where region='%s';";
                 regiondb.execSQL( String.format(sql1, deleteRegion) );
                 regiondb.execSQL( String.format(sql2, deleteRegion) );
+                //tell onresume to refresh gemfCollection
+                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+                editor.putBoolean("RefreshGemf", true);
+                //if the prefered region is the one being deletes... set pref to None
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                if (prefs.getString("PrefChartLocation", "None").equals(deleteRegion)) {
+                    editor.putString("PrefChartLocation", "None");
+                }
+                editor.commit();
+                //restart this activity to show proper region status
                 RegionActivity.this.Restart();
                 return;
             }
@@ -164,7 +180,6 @@ public class RegionActivity extends ListActivity {
     public void Restart() {
         regiondb.close();
         Intent intent = getIntent();
-        //Intent intent = new Intent(getBaseContext(), RegionActivity.class);
         finish();
         startActivity(intent);
     }

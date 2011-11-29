@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MX Mariner</string>
-    <string name="app_version">1.1 RC1</string>
-    <string name="app_buildno">11212011</string>
+    <string name="app_version">1.1 RC2</string>
+    <string name="app_buildno">11272011</string>
     <string name="credits">
 Website:\n
 MXMariner.com\n\n

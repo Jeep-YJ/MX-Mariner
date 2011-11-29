@@ -7,14 +7,16 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
 
-public class Orphans extends AsyncTask<Void, String, Void>{
+public class Orphans extends AsyncTask<Void, String, Boolean>{
     private MapActivity mapActivity;
+    private GemfCollection gemfCollection;
     private final String tag = "MXM";
     protected ProgressDialog progressDialog;
     private String region = "None";
     
-    public Orphans(MapActivity mapActivity) {
-        this.mapActivity = mapActivity;
+    public Orphans(MapActivity ctx, GemfCollection gmfc) {
+        mapActivity = ctx;
+        gemfCollection = gmfc;
         progressDialog = new ProgressDialog(mapActivity);
         progressDialog.setTitle("Loading Charts");
         progressDialog.setMessage("Searching for new chart region data.");
@@ -24,12 +26,12 @@ public class Orphans extends AsyncTask<Void, String, Void>{
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
+    protected Boolean doInBackground(Void... params) {
         //look for regions with installeddate of 0 in database that have corresponding <region>.data & <region>.gemf files on sd card
         //reinstall cached data for these orphaned regions
         SQLiteDatabase regiondb = (new RegionDbHelper(mapActivity)).getWritableDatabase();
         String[] zeroDate = new ChartDataStore(regiondb).GetUninstalledRegions(); //list of uninstalled or zero date regions
-        GemfCollection gemfCollection = new GemfCollection();
+        //GemfCollection gemfCollection = new GemfCollection();
         String[] regionList = gemfCollection.getRegionList(); //list of <region>.gemf that has corresponding <region>.data file
         String[] orphans = GemfCollection.lstUnion(regionList, zeroDate); //narrow list down so we can re-install data
         for (int i=0; i<orphans.length; i++) {
@@ -51,7 +53,7 @@ public class Orphans extends AsyncTask<Void, String, Void>{
             Log.i(tag, "finished installing orphaned data : "+orphans[i]);
         }
         regiondb.close();
-        return null;
+        return true;
     }
     
     protected void onProgressUpdate(String... progress){
@@ -59,7 +61,7 @@ public class Orphans extends AsyncTask<Void, String, Void>{
     }
     
     @Override
-    public void onPostExecute(Void result) {
+    public void onPostExecute(Boolean result) {
         progressDialog.dismiss();
         
         if (mapActivity.warning)
@@ -71,6 +73,9 @@ public class Orphans extends AsyncTask<Void, String, Void>{
             mapActivity.editor.putString("PrefChartLocation", region);
             mapActivity.editor.commit();
         }
+        
+        mapActivity.chartOverlays = new ChartOverlays(mapActivity);
+        mapActivity.chartOverlays.addAll();
         
     }
 

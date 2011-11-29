@@ -20,8 +20,10 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -38,13 +40,14 @@ public class MapActivity extends Activity {
     //====================
     
     protected final int RASTERCHARTLAYER = 0;
-    //private final String tag = "MXM";
+    private final String tag = "MXM";
     
     //====================
     // Fields
     //====================
 
     private MapController mapController;
+    private Orphans orphans;
     protected MapView mapView;
     private Activity mActivity;
     protected MxmMyLocationOverlay mLocationOverlay;
@@ -54,7 +57,7 @@ public class MapActivity extends Activity {
     protected int dayDuskNight; //0-day, 1-dusk, 2-night
     protected SharedPreferences prefs;
     protected SharedPreferences.Editor editor;
-    protected GemfCollection gemfCollection; //gets refreshed when ChartOverlays task executes
+    protected GemfCollection gemfCollection;
     private int start_lat; //geopoint
     private int start_lon; //geopoint
     private int start_zoom;
@@ -66,6 +69,8 @@ public class MapActivity extends Activity {
     protected AlertDialog warningAlert;
     private static AlertDialog.Builder warningDialog;
     protected MapTileModuleProviderBase[] myProviders = new MapTileModuleProviderBase[1];
+    protected Location mLocation;
+    protected ChartOverlays chartOverlays;
     
     //====================
     // Methods
@@ -124,8 +129,10 @@ public class MapActivity extends Activity {
         }
     };
     
-    protected void refeshChartLayer() {
-        new ChartOverlays(this);
+    protected void refreshChartLayer() {
+        chartOverlays.removeAll();
+        chartOverlays.loadRegion();
+        chartOverlays.addAll();
     }
     
     protected void setBrightMode() {
@@ -156,6 +163,13 @@ public class MapActivity extends Activity {
         }
     }
     
+    protected void Restart() {
+        Intent intent = getIntent();
+        int pid = android.os.Process.myPid();
+        finish();
+        startActivity(intent);
+        android.os.Process.killProcess(pid);
+    }
     //====================
     // SuperClass Methods
     //====================
@@ -178,7 +192,8 @@ public class MapActivity extends Activity {
         
         SetPreferences(PreferenceManager.getDefaultSharedPreferences(this)); //initial position, zoom
         
-        Orphans orphans = new Orphans(this);
+        gemfCollection = new GemfCollection();
+        orphans = new Orphans(this, gemfCollection);
         orphans.execute();
         
         mapView = (MapView) findViewById(R.id.mapview);
@@ -213,7 +228,8 @@ public class MapActivity extends Activity {
         
         //scale-bar overlay setup
         mScaleBarOverlay = new ScaleBarOverlay(this);
-        mScaleBarOverlay.setScaleBarOffset(70, 56);
+        //mScaleBarOverlay.setBarPaint(pBarPaint)
+        mScaleBarOverlay.setScaleBarOffset(10, 56);
         mScaleBarOverlay.setLineWidth((float) 3.0);
         mScaleBarOverlay.setTextSize((float) 25.0);
         mScaleBarOverlay.setNautical();
@@ -238,15 +254,15 @@ public class MapActivity extends Activity {
     
     @Override
     public void onPause() {
-        StorePreferences(false);
-        //completely kill this activity so base map gets reset
-        int pid = android.os.Process.myPid();
-        android.os.Process.killProcess(pid);
+        mLocationOverlay.disableMyLocation(); //we don't need the gps when paused
+        chartOverlays.removeAll();
+        StorePreferences(false); //set warning to not show again
+        super.onPause();
     }
     
     @Override
     public void onBackPressed() {
-        StorePreferences(true);
+        StorePreferences(true); //true sets warning to be shown
         //completely kill this activity
         int pid = android.os.Process.myPid();
         android.os.Process.killProcess(pid);
@@ -255,15 +271,31 @@ public class MapActivity extends Activity {
     
     @Override
     public void onResume() {
-        mLocationOverlay.enableMyLocation();
-        
+        //see if the base map style has changed and restart activity if necessary
         String defStyle = this.getResources().getStringArray(R.array.base_maps)[0];
-        if (prefs.getString("BaseMapSetting", defStyle).equals(defStyle))
-            bingMapTileSource.setStyle(BingMapTileSource.IMAGERYSET_ROAD);
-        else
-            bingMapTileSource.setStyle(BingMapTileSource.IMAGERYSET_AERIALWITHLABELS);
+        String requestedStyle;
+        if (prefs.getString("BaseMapSetting", defStyle).equals(defStyle)) {
+            requestedStyle = BingMapTileSource.IMAGERYSET_ROAD;
+        } else {
+            requestedStyle = BingMapTileSource.IMAGERYSET_AERIALWITHLABELS;
+        }
+        String setStyle = bingMapTileSource.getStyle();
+        if (!requestedStyle.equals(setStyle)) {
+            Log.i(tag, "Base map preference changed; restarting activity...");
+            Restart();
+        }
         
-        new ChartOverlays(this);
+        //see if gemfCollection needs to be refreshed and preferred chart region has changed
+        if (prefs.getBoolean("RefreshGemf", false)) {
+            gemfCollection = new GemfCollection();
+            editor.putBoolean("RefreshGemf", false); //we don't need to refresh again
+            refreshChartLayer();
+        } else if ( !(chartOverlays==null) ) {
+            chartOverlays.addAll();
+        }
+        
+        //turn gps on and listen
+        mLocationOverlay.enableMyLocation();
         
         //setup buttons according to preferences
         LinearLayout llb = (LinearLayout) this.findViewById(R.id.linearLayout_buttons);
@@ -277,10 +309,9 @@ public class MapActivity extends Activity {
         } else
             llb.addView(btnFollow);
        
-       //ddn mode
-       setBrightMode();
-       
-       super.onResume();
+        //ddn mode
+        setBrightMode();
+        super.onResume();
     }
     
     //android menu button

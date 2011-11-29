@@ -104,13 +104,6 @@ public class SettingsDialog extends PreferenceActivity {
         
     }
     
-    @Override
-    public void onBackPressed() {
-        startActivity(new Intent(this, MapActivity.class));
-        finish();
-        return;
-    }
-    
     private void ShowAbout() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         String version = String.format("Version: %s\n", getResources().getString(R.string.app_version));

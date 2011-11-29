@@ -83,6 +83,7 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
 
     protected final MapView mMapView;
     protected final Activity thisActivity;
+    private final MapActivity mapActivity;
     protected final TextView sogTxt;
     protected final TextView cogTxt;
     protected final Button btnFollow;
@@ -98,7 +99,7 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
     private final LinkedList<Runnable> mRunOnFirstFix = new LinkedList<Runnable>();
     private final Point mMapCoords = new Point();
 
-    private Location mLocation;
+    //private Location mLocation;
     private long mLocationUpdateMinTime = 0;
     private float mLocationUpdateMinDistance = 0.0f;
     protected boolean mFollow = false; // follow location updates
@@ -145,13 +146,14 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
     // Constructors
     //====================
 
-    public MxmMyLocationOverlay(final Context ctx, final MapView mapView, final Activity mActivity) {
+    public MxmMyLocationOverlay(final MapActivity ctx, final MapView mapView, final Activity mActivity) {
         this(ctx, mapView, mActivity, new DefaultResourceProxyImpl(ctx));
     }
 
-    public MxmMyLocationOverlay(final Context ctx, final MapView mapView, final Activity mActivity,
+    public MxmMyLocationOverlay(final MapActivity ctx, final MapView mapView, final Activity mActivity,
             final ResourceProxy pResourceProxy) {
         super(pResourceProxy);
+        mapActivity = ctx;
         mMapView = mapView;
         thisActivity = mActivity;
         sogTxt = (TextView) thisActivity.findViewById(R.id.sog);
@@ -334,13 +336,13 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
             return;
         }
 
-        if (mLocation != null) {
+        if (mapActivity.mLocation != null) {
 
             mMyLocation.setCoordsE6(
-                    (int) (mLocation.getLatitude() * 1E6),
-                    (int) (mLocation.getLongitude() * 1E6));
+                    (int) (mapActivity.mLocation.getLatitude() * 1E6),
+                    (int) (mapActivity.mLocation.getLongitude() * 1E6));
 
-            drawMyLocation(canvas, mapView, mLocation, mMyLocation);
+            drawMyLocation(canvas, mapView, mapActivity.mLocation, mMyLocation);
         }
 
         if (isCompassEnabled() && !Float.isNaN(mAzimuth)) {
@@ -358,7 +360,7 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
             return;
         }
 
-        mLocation = location;
+        mapActivity.mLocation = location;
         if (mFollow) {
             mMapController.setCenter(new GeoPoint(location));
         } else {
@@ -386,9 +388,9 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
 
     public boolean onSnapToItem(final int x, final int y, final Point snapPoint,
             final MapView mapView) {
-        if (this.mLocation != null) {
+        if (this.mapActivity.mLocation != null) {
             final Projection pj = mapView.getProjection();
-            pj.toMapPixels(new GeoPoint(mLocation), mMapCoords);
+            pj.toMapPixels(new GeoPoint(mapActivity.mLocation), mMapCoords);
             snapPoint.x = mMapCoords.x;
             snapPoint.y = mMapCoords.y;
             final double xDiff = x - mMapCoords.x;
@@ -488,15 +490,15 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
      * Return a GeoPoint of the last known location, or null if not known.
      */
     public GeoPoint getMyLocation() {
-        if (mLocation == null) {
+        if (mapActivity.mLocation == null) {
             return null;
         } else {
-            return new GeoPoint(mLocation);
+            return new GeoPoint(mapActivity.mLocation);
         }
     }
 
     public Location getLastFix() {
-        return mLocation;
+        return mapActivity.mLocation;
     }
 
     /**
@@ -522,9 +524,9 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
 
         // set initial location when enabled
         if (isMyLocationEnabled()) {
-            mLocation = LocationUtils.getLastKnownLocation(mLocationManager);
-            if (mLocation != null) {
-                mMapController.animateTo(new GeoPoint(mLocation));
+            mapActivity.mLocation = LocationUtils.getLastKnownLocation(mLocationManager);
+            if (mapActivity.mLocation != null) {
+                mMapController.animateTo(new GeoPoint(mapActivity.mLocation));
             }
         }
 
@@ -573,9 +575,9 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
 
         // set initial location when enabled
         if (isFollowLocationEnabled()) {
-            mLocation = LocationUtils.getLastKnownLocation(mLocationManager);
-            if (mLocation != null) {
-                mMapController.animateTo(new GeoPoint(mLocation));
+            mapActivity.mLocation = LocationUtils.getLastKnownLocation(mLocationManager);
+            if (mapActivity.mLocation != null) {
+                mMapController.animateTo(new GeoPoint(mapActivity.mLocation));
             }
         }
 
@@ -666,7 +668,7 @@ public class MxmMyLocationOverlay extends Overlay implements IMyLocationOverlay,
     }
 
     public boolean runOnFirstFix(final Runnable runnable) {
-        if (mLocationListener != null && mLocation != null) {
+        if (mLocationListener != null && mapActivity.mLocation != null) {
             new Thread(runnable).start();
             return true;
         } else {

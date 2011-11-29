@@ -10,13 +10,13 @@ import android.widget.Spinner;
 import android.widget.ToggleButton;
 
 public class DisplayMode extends Dialog {
-    MapActivity context;
+    MapActivity mapActivity;
     private boolean init1 = true;
     private boolean init2 = true;
 
-    public DisplayMode(final MapActivity context, final String[] regionItems) {
-        super(context);
-        this.context = context;
+    public DisplayMode(final MapActivity ctx, final String[] regionItems) {
+        super(ctx); //create default dialog window
+        mapActivity = ctx;
         this.setContentView(R.layout.map_mode);
         
         Button okButton = (Button) findViewById(R.id.buttonOK);
@@ -27,14 +27,14 @@ public class DisplayMode extends Dialog {
         });
         
         Spinner brightness = (Spinner) findViewById(R.id.spinnerBrightness);
-        brightness.setSelection(context.dayDuskNight);
+        brightness.setSelection(mapActivity.dayDuskNight);
         brightness.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> arg0, View arg1,
                     int arg2, long arg3) {
                 if (!init1) { //keep from executing twice
-                    context.dayDuskNight = arg2;
-                    context.editor.putInt("DDN", arg2);
-                    context.setBrightMode();
+                    mapActivity.dayDuskNight = arg2;
+                    mapActivity.editor.putInt("DDN", arg2);
+                    mapActivity.setBrightMode();
                 } else
                     init1 = false;
             }
@@ -44,18 +44,18 @@ public class DisplayMode extends Dialog {
         });
         
         Spinner regionSpinner = (Spinner) findViewById(R.id.spinnerRegion);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, 
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(mapActivity, 
                 android.R.layout.simple_spinner_item, regionItems);
         regionSpinner.setAdapter(adapter);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        regionSpinner.setSelection( Search(regionItems, context.prefs.getString("PrefChartLocation", "None")) );
+        regionSpinner.setSelection( Search(regionItems, mapActivity.prefs.getString("PrefChartLocation", "None")) );
         regionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> arg0, View arg1,
                     int arg2, long arg3) {
                 if (!init2) { //keep from executing twice
-                    context.editor.putString("PrefChartLocation", regionItems[arg2]);
-                    context.editor.commit();
-                    context.refeshChartLayer();
+                    mapActivity.editor.putString("PrefChartLocation", regionItems[arg2]);
+                    mapActivity.editor.commit();
+                    mapActivity.refreshChartLayer();
                 }
                 else
                     init2 = false;
@@ -66,12 +66,12 @@ public class DisplayMode extends Dialog {
         });
         
         ToggleButton toggleChart = (ToggleButton) findViewById(R.id.toggleChart);
-        toggleChart.setChecked(context.prefs.getBoolean("UseChartOverlay", true));
+        toggleChart.setChecked(mapActivity.prefs.getBoolean("UseChartOverlay", true));
         toggleChart.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-                context.editor.putBoolean("UseChartOverlay", arg1);
-                context.editor.commit();
-                context.refeshChartLayer();
+                mapActivity.editor.putBoolean("UseChartOverlay", arg1);
+                mapActivity.editor.commit();
+                mapActivity.refreshChartLayer();
             }
         });
         
