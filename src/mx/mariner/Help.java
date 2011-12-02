@@ -1,7 +1,6 @@
 package mx.mariner;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -22,10 +21,10 @@ public class Help extends Activity {
         mWebView.loadUrl("file:///android_asset/help.html");
     }
     
-    @Override
-    public void onBackPressed() {
-        startActivity(new Intent(this, MapActivity.class));
-        finish();
-        return;
-    }
+//    @Override
+//    public void onBackPressed() {
+//        startActivity(new Intent(this, MapActivity.class));
+//        finish();
+//        return;
+//    }
 }

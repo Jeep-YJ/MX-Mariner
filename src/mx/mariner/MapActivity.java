@@ -13,7 +13,6 @@ import org.osmdroid.tileprovider.tilesource.bing.BingMapTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.ScaleBarOverlay;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -50,7 +49,7 @@ public class MapActivity extends Activity {
     private Orphans orphans;
     protected MapView mapView;
     private Activity mActivity;
-    protected MxmMyLocationOverlay mLocationOverlay;
+    protected MxMyLocationOverlay mLocationOverlay;
     protected ScaleBarOverlay mScaleBarOverlay;
     protected MeasureOverlay measureOverlay;
     protected ResourceProxy mResourceProxy;
@@ -100,24 +99,21 @@ public class MapActivity extends Activity {
     }
     private View.OnClickListener ZoomInListener = new View.OnClickListener() {
         public void onClick(View v) {
-            //is there a better way?...zoom during follow is screwed up otherwise
+          //is there a better way?...zoom during follow is screwed up otherwise
             if (mLocationOverlay.isFollowLocationEnabled()) {
                 mLocationOverlay.disableFollowLocation();
-                mapController.zoomIn();
-            } else
-                mapController.zoomIn();
+            }
+            mapController.zoomIn();
         }
     };
     
     private View.OnClickListener ZoomOutListener = new View.OnClickListener() {
-        public void onClick(View v)
-        {
+        public void onClick(View v) {
             //is there a better way?...zoom during follow is screwed up otherwise
             if (mLocationOverlay.isFollowLocationEnabled()) {
                 mLocationOverlay.disableFollowLocation();
-                mapController.zoomOut();
-            } else
-                mapController.zoomOut();
+            }
+            mapController.zoomOut();
         }
     };
     
@@ -224,12 +220,12 @@ public class MapActivity extends Activity {
         mapController.setCenter(new GeoPoint(start_lat, start_lon));
         
         //location overlay setup
-        mLocationOverlay = new MxmMyLocationOverlay(this, mapView, mActivity, mResourceProxy);
+        mLocationOverlay = new MxMyLocationOverlay(this, mapView, mActivity, mResourceProxy);
         
         //scale-bar overlay setup
         mScaleBarOverlay = new ScaleBarOverlay(this);
         //mScaleBarOverlay.setBarPaint(pBarPaint)
-        mScaleBarOverlay.setScaleBarOffset(10, 56);
+        mScaleBarOverlay.setScaleBarOffset(10, 50);
         mScaleBarOverlay.setLineWidth((float) 3.0);
         mScaleBarOverlay.setTextSize((float) 25.0);
         mScaleBarOverlay.setNautical();
@@ -286,7 +282,9 @@ public class MapActivity extends Activity {
         }
         
         //see if gemfCollection needs to be refreshed and preferred chart region has changed
-        if (prefs.getBoolean("RefreshGemf", false)) {
+        //chartOverlays could be null if application crashed after a region was deleted
+        if (prefs.getBoolean("RefreshGemf", false) && chartOverlays != null) {
+            Log.i(tag, "GemfCollection refreshed");
             gemfCollection = new GemfCollection();
             editor.putBoolean("RefreshGemf", false); //we don't need to refresh again
             refreshChartLayer();

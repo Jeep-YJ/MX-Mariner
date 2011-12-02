@@ -47,11 +47,20 @@ public class GemfCollection {
     }
     
     public GemfCollection (final String dir) {
-        //establishes list of collections of .gemf and corresponding .db files
-        establishCollection(dir);
-        
-        //set minimum and maximum zooms
-        setZoomLevels();
+        //see if sd card directory is available
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            //Log.i("MXM", "GemfCollection Directory:"+dir);
+            establishCollection(dir);
+            
+            //set minimum and maximum zooms
+            setZoomLevels();
+        } else {
+            
+            Log.e("MXM", "SD Card:"+Environment.getExternalStorageState());
+            gemfList = new String[] {"None"};
+            datList = new String[] {""};
+            regionList = new String[] {""};
+        }
         
     }
     

@@ -125,9 +125,11 @@ public class RegionActivity extends ListActivity {
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             
             public void onClick(DialogInterface dialog, int which) {
-                //delete the .gemf file
+                //delete the .gemf  and .data files
                 File deleteMe = new File(Environment.getExternalStorageDirectory()+"/mxmariner/"+deleteRegion+".gemf");
                 deleteMe.delete();
+                File deleteMeAlso = new File(Environment.getExternalStorageDirectory()+"/mxmariner/"+deleteRegion+".data");
+                deleteMeAlso.delete();
                 //remove the sql data
                 String sql1 = "UPDATE regions SET installeddate='0' WHERE name='%s';";
                 String sql2 = "DELETE from charts where region='%s';";

@@ -73,6 +73,9 @@ public class RegionDownload extends AsyncTask<Void, Integer, Void> {
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             public void onCancel(DialogInterface dialog) {
+                File deleteMe = new File(Environment.getExternalStorageDirectory()+"/mxmariner/"+region+".part");
+                if (deleteMe.isFile())
+                    deleteMe.delete();
                 Toast.makeText(regionActivity, region+" download canceled!", Toast.LENGTH_LONG).show();
                 RegionDownload.this.cancel(true);
             }
