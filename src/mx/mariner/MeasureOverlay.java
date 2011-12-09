@@ -1,3 +1,7 @@
+// Copyright (C) 2011 by Will Kamp <manimaul!gmail.com>
+// Distributed under the terms of the Simplified BSD Licence.
+// See license.txt for details
+
 package mx.mariner;
 
 import java.util.ArrayList;
@@ -21,9 +25,10 @@ import android.view.MotionEvent;
 public class MeasureOverlay extends Overlay {
     private Paint txtLinePaint = new Paint();
     private Paint txtLnBgPaint = new Paint();
+    private Paint pen = new Paint();
     private final Rect mBounds = new Rect();
-    private final int strokeWidth = 3;
-    private final int targetWidth = 5;
+    private final int strokeWidth = 2;
+    private final int targetWidth = 4;
     private final int textSize = 24;
     private boolean render = false;
     private MapActivity mapActivity;
@@ -42,16 +47,20 @@ public class MeasureOverlay extends Overlay {
         super(pResourceProxy);
         this.mapActivity = mapActivity;
 
-        txtLinePaint.setColor(mapActivity.getResources().getColor(R.color.hud_txt));
+        txtLinePaint.setColor(mapActivity.getResources().getColor(R.color.greenglo));
         txtLinePaint.setAntiAlias(true);
         txtLinePaint.setStyle(Style.FILL);
         txtLinePaint.setAlpha(255);
         txtLinePaint.setTextSize(textSize);
         txtLinePaint.setStrokeWidth(strokeWidth);
         
-        txtLnBgPaint.setColor(mapActivity.getResources().getColor(R.color.hud_bg));
+        txtLnBgPaint.setColor(mapActivity.getResources().getColor(R.color.smokey));
         txtLnBgPaint.setAntiAlias(true);
         txtLnBgPaint.setStrokeWidth(strokeWidth*3);
+        
+        pen.setColor(mapActivity.getResources().getColor(R.color.smokey));
+        pen.setAntiAlias(true);
+        pen.setStrokeWidth(strokeWidth);
         
     }
     
@@ -68,11 +77,21 @@ public class MeasureOverlay extends Overlay {
         if (mapView.isAnimating())
             return;
         
+        //target cursor
+        mBounds.set(mapView.getScreenRect(mBounds));
+        final int centerX = (int) mBounds.exactCenterX();
+        final int centerY = (int) mBounds.exactCenterY();
+        canvas.drawCircle(centerX, centerY, strokeWidth, pen);
+        canvas.drawLine(centerX+10, centerY, centerX+30, centerY, pen);
+        canvas.drawLine(centerX-30, centerY, centerX-10, centerY, pen);
+        canvas.drawLine(centerX, centerY+10,centerX, centerY+30, pen);
+        canvas.drawLine(centerX, centerY-10,centerX, centerY-30, pen);
+        
         if (render && mapActivity.mLocation != null) {
-            mBounds.set(mapView.getScreenRect(mBounds));
+            //mBounds.set(mapView.getScreenRect(mBounds));
             
-            final int centerX = (int) mBounds.exactCenterX();
-            final int centerY = (int) mBounds.exactCenterY();
+            //final int centerX = (int) mBounds.exactCenterX();
+            //final int centerY = (int) mBounds.exactCenterY();
             
             String distance;
             String bearing;
@@ -113,26 +132,50 @@ public class MeasureOverlay extends Overlay {
             canvas.drawCircle(centerX, centerY, targetWidth, txtLinePaint);
             canvas.drawLine(locationPoint.x, locationPoint.y, centerX, centerY, txtLinePaint);
             
-            ArrayList<String> messages = new ArrayList<String>();
+            drawInfoBox(canvas, latitude, longitude, distance, bearing, centerX, centerY);
             
-            //messages.add("Cursor");
-            if (latitude < 0) {
-                messages.add(String.valueOf(-latitude)+ "\u00B0 S");
-            } else {
-                messages.add(String.valueOf(latitude)+ "\u00B0 N");
-            }
-            if (longitude < 0) {
-                messages.add(String.valueOf(-longitude)+ "\u00B0 W");
-            } else {
-                messages.add(String.valueOf(longitude)+ "\u00B0 E");
-            }
+        } else if (render) {
+            IGeoPoint point = mapView.getMapCenter();
+            final float latitude = point.getLatitudeE6() / 1000000F;
+            final float longitude = point.getLongitudeE6() / 1000000F;
+            
+            //mBounds.set(mapView.getScreenRect(mBounds));
+            //final int centerX = (int) mBounds.exactCenterX();
+            //final int centerY = (int) mBounds.exactCenterY();
+            canvas.drawCircle(centerX, centerY, targetWidth+strokeWidth, txtLnBgPaint);
+            canvas.drawCircle(centerX, centerY, targetWidth, txtLinePaint);
+            drawInfoBox(canvas, latitude, longitude, null, null, centerX, centerY);
+        }
+    }
+    
+    //====================
+    // Methods
+    //====================
+    
+    private void drawInfoBox(Canvas canvas, float latitude, float longitude, String distance, String bearing, int centerX, int centerY) {
+        ArrayList<String> messages = new ArrayList<String>();
+        
+        //messages.add("Cursor");
+        if (latitude < 0) {
+            messages.add(String.valueOf(-latitude)+ "\u00B0 S");
+        } else {
+            messages.add(String.valueOf(latitude)+ "\u00B0 N");
+        }
+        if (longitude < 0) {
+            messages.add(String.valueOf(-longitude)+ "\u00B0 W");
+        } else {
+            messages.add(String.valueOf(longitude)+ "\u00B0 E");
+        }
+        if ( distance!= null && bearing !=null) {
             messages.add(distance);
             messages.add(bearing);
-            
-            final int width = (int) txtLinePaint.measureText(StringArrayListMaxLength(messages));
-            final int left;
-            
-            //draw box west of center
+        }
+        
+        final int width = (int) txtLinePaint.measureText(StringArrayListMaxLength(messages));
+        final int left;
+        
+        if (mapActivity.mLocation != null) {
+          //draw box west of center
             if (mapActivity.mLocation.getLongitude() > longitude) {
                 left = mBounds.left + (mBounds.right-centerX)/2 - width/2;
             }
@@ -140,24 +183,22 @@ public class MeasureOverlay extends Overlay {
             else {
                 left = mBounds.right - (mBounds.right-centerX)/2 - width/2;
             }
-            final int right = left + width;
-            final int height = (int) txtLinePaint.getTextSize() * messages.size();
-            final int top = centerY - height/2;
-            int bottom = top + height;
-            canvas.drawRect(left-10, top, right+10, bottom+10 , txtLnBgPaint);
-            
-            int i=1;
-            for (String message:messages) {
-                canvas.drawText(message, left, top + txtLinePaint.getTextSize()*i, txtLinePaint);
-                i++;
-            }
-            
+        } else {
+            left = mBounds.right - (mBounds.right-centerX)/2 - width/2;
+        }
+        
+        final int right = left + width;
+        final int height = (int) txtLinePaint.getTextSize() * messages.size();
+        final int top = centerY - height/2;
+        int bottom = top + height;
+        canvas.drawRect(left-10, top, right+10, bottom+10 , txtLnBgPaint);
+        
+        int i=1;
+        for (String message:messages) {
+            canvas.drawText(message, left, top + txtLinePaint.getTextSize()*i, txtLinePaint);
+            i++;
         }
     }
-    
-    //====================
-    // Methods
-    //====================
     
     public String StringArrayListMaxLength (ArrayList<String> array) {
         int max = 0;
@@ -185,11 +226,11 @@ public class MeasureOverlay extends Overlay {
         return super.onTouchEvent(event, mapView);
     }
     
-    public void disableMeasure() {
+    public void disable() {
         setEnabled(false);
     }
 
-    public void enableMeasure() {
+    public void enable() {
         setEnabled(true);
     }
 

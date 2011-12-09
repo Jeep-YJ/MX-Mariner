@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<color name="hud_txt">#ff1aff00</color>
-<color name="hud_bg">#8c000000</color>
-<color name="day">#00ffffff</color>
-<color name="dusk">#75000000</color>
-<color name="night">#37ff0024</color>
+<color name="greenglo">#ff1aff00</color>
+<color name="blueglo">#ff0095ff</color>
+<color name="smokey">#8c000000</color>
+<color name="transparent">#00ffffff</color>
+<color name="redtint">#37ff0024</color>
 </resources>

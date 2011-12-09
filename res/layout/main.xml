@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mainframe"
     android:layout_width="fill_parent" 
     android:layout_height="fill_parent">
     <org.osmdroid.views.MapView
@@ -12,50 +13,50 @@
         android:layout_width="fill_parent" 
         android:layout_height="fill_parent"
         android:id="@+id/ddnMask" 
-        android:background="@color/day">
+        android:background="@color/transparent">
     </FrameLayout>
 
     <LinearLayout 
         android:layout_width="fill_parent"
         android:id="@+id/linearLayout_hud" 
         android:layout_height="wrap_content"
-        android:background="@color/hud_bg">
+        android:background="@color/smokey">
         <TextView 
             android:id="@+id/sog_label" 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" 
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/hud_txt" 
+            android:textColor="@color/greenglo" 
             android:text="SOG: " />
         <TextView 
             android:id="@+id/sog" 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" 
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/hud_txt" 
+            android:textColor="@color/greenglo" 
             android:text="0.0kts | " />
         <TextView 
             android:id="@+id/cog_label" 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" 
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/hud_txt" android:text="COG: " />
+            android:textColor="@color/greenglo" android:text="COG: " />
         <TextView 
             android:id="@+id/cog" 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" 
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/hud_txt" 
+            android:textColor="@color/greenglo" 
             android:text="0.0° " />
     </LinearLayout>
-
-    <LinearLayout 
+    
+    <RelativeLayout
+        android:id="@+id/control_buttons"
         android:layout_width="fill_parent"
-        android:id="@+id/linearLayout_buttons" 
-        android:layout_gravity="bottom"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5px"
-        android:layout_marginLeft="10px">
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="5px">
+        
         <Button 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" 
@@ -67,20 +68,86 @@
         <Button 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" 
-            android:layout_gravity="left"
+            android:layout_toRightOf="@id/btnZoomIn"
             android:id="@+id/btnZoomOut" 
             android:background="@drawable/zoomout"
             android:layout_marginRight="5px"
             android:layout_marginLeft="5px" />
         <Button 
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" 
-            android:layout_gravity="right"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/btnZoomOut"
             android:id="@+id/btnFollow" 
             android:background="@drawable/follow"
             android:layout_marginRight="5px"
             android:layout_marginLeft="5px" />
-    </LinearLayout>
+        
+
+    </RelativeLayout>
+    
+    <RelativeLayout
+        android:id="@+id/extra_buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_gravity="right"
+        android:layout_marginBottom="5px"
+        android:layout_marginRight="5px">
+        
+        <Button
+            android:id="@+id/menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/menu"
+            android:layout_marginRight="5px"
+            android:layout_marginTop="5px"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/menu"
+            android:layout_centerInParent="true"
+            android:orientation="vertical" >
+
+                
+            <Button
+                android:id="@+id/measure"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5px"
+                android:layout_marginTop="5px"
+                android:background="@drawable/measure"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/track"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5px"
+                android:layout_marginTop="5px"
+                android:background="@drawable/track"
+                android:visibility="gone" />
+            
+            <Button
+                android:id="@+id/route"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5px"
+                android:layout_marginTop="5px"
+                android:background="@drawable/route"
+                android:visibility="gone" />
+            
+            <Button
+                android:id="@+id/waypoint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5px"
+                android:layout_marginTop="5px"
+                android:background="@drawable/waypoint"
+                android:visibility="gone" />
+        </LinearLayout>
+        
+    </RelativeLayout>
 
 </FrameLayout>
 

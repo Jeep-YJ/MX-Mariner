@@ -4,6 +4,8 @@
 
 package mx.mariner;
 
+import java.util.ArrayList;
+
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
@@ -13,12 +15,15 @@ import org.osmdroid.tileprovider.tilesource.bing.BingMapTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.OverlayItem;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -30,7 +35,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 public class MapActivity extends Activity {
     
@@ -49,20 +55,25 @@ public class MapActivity extends Activity {
     private Orphans orphans;
     protected MapView mapView;
     private Activity mActivity;
-    protected MxMyLocationOverlay mLocationOverlay;
-    protected ScaleBarOverlay mScaleBarOverlay;
-    protected MeasureOverlay measureOverlay;
+    
     protected ResourceProxy mResourceProxy;
     protected int dayDuskNight; //0-day, 1-dusk, 2-night
     protected SharedPreferences prefs;
     protected SharedPreferences.Editor editor;
     protected GemfCollection gemfCollection;
+    protected SQLiteDatabase featuresDb;
     private int start_lat; //geopoint
     private int start_lon; //geopoint
     private int start_zoom;
     private Button btnZoomIn;
     private Button btnZoomOut;
-    private Button btnFollow;
+    protected Button btnFollow;
+    protected Button btnMenu;
+    protected Button btnMeasure;
+    protected Button btnTrack;
+    protected Button btnRoute;
+    protected Button btnWaypoint;
+    private boolean menuButtons = false;
     protected boolean warning;
     private BingMapTileSource bingMapTileSource;
     protected AlertDialog warningAlert;
@@ -70,6 +81,15 @@ public class MapActivity extends Activity {
     protected MapTileModuleProviderBase[] myProviders = new MapTileModuleProviderBase[1];
     protected Location mLocation;
     protected ChartOverlays chartOverlays;
+    protected MxMyLocationOverlay mLocationOverlay;
+    protected ScaleBarOverlay mScaleBarOverlay;
+    protected MeasureOverlay measureOverlay;
+    protected MeasureToolOverlay measureToolOverlay;
+    //TODO:
+    protected ItemizedIconOverlay<OverlayItem> waypointOverlay;
+    //protected RoutOverlay routOverlay;
+    //protected TrackOverlay trackOverlay;
+
     
     //====================
     // Methods
@@ -118,12 +138,71 @@ public class MapActivity extends Activity {
     };
     
     private View.OnClickListener FollowListener = new View.OnClickListener() {
-        public void onClick(View v)
-        {
+        public void onClick(View v) {
             if (!mLocationOverlay.isFollowLocationEnabled())
                 mLocationOverlay.enableFollowLocation();
         }
     };
+    
+    private View.OnClickListener BtnMeasureListener = new View.OnClickListener() {
+        
+        public void onClick(View v) {
+            measureToolOverlay.StartMeasure();
+        }
+    };
+    
+    private View.OnClickListener BtnTrackListener = new View.OnClickListener() {
+        
+        public void onClick(View v) {
+            // TODO Auto-generated method stub
+            
+        }
+    };
+    
+    private View.OnClickListener BtnRouteListener = new View.OnClickListener() {
+        
+        public void onClick(View v) {
+            // TODO Auto-generated method stub
+            
+        }
+    };
+    
+    private View.OnClickListener BtnWaypointListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            GeoPoint point = (GeoPoint) mapView.getMapCenter();
+            if (!WaypointFunctions.isWayPoint(featuresDb, point.getLatitudeE6(), point.getLongitudeE6())){
+                final NewWaypointDialog nwDlg = new NewWaypointDialog(MapActivity.this);
+                nwDlg.show();
+            } else {
+                Toast.makeText(MapActivity.this, "There already is a waypoint here!", Toast.LENGTH_SHORT).show();
+            }
+            
+        }
+    };
+    
+    private View.OnClickListener BtnMenuListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            //TODO:
+            if (menuButtons) {
+                menuButtons = false;
+                btnMeasure.setVisibility(View.GONE);
+                btnTrack.setVisibility(View.GONE);
+                btnRoute.setVisibility(View.GONE);
+                btnWaypoint.setVisibility(View.GONE);
+            } else {
+                menuButtons = true;
+                btnMeasure.setVisibility(View.VISIBLE);
+                //btnTrack.setVisibility(View.VISIBLE);
+                //btnRoute.setVisibility(View.VISIBLE);
+                btnWaypoint.setVisibility(View.VISIBLE);
+            }
+        }
+    };
+    
+    protected void initChartLayer() {
+        chartOverlays = new ChartOverlays(this);
+        chartOverlays.addAll();
+    }
     
     protected void refreshChartLayer() {
         chartOverlays.removeAll();
@@ -137,21 +216,21 @@ public class MapActivity extends Activity {
         
         switch (dayDuskNight) {
             case 0:
-                ddnMask.setBackgroundResource(R.color.day);
+                ddnMask.setBackgroundResource(R.color.transparent);
                 float day = prefs.getFloat("DayBright", (float) 1.0);
                 layoutParams.screenBrightness = day;
                 getWindow().setAttributes(layoutParams);
                 break;
                 
             case 1:
-                ddnMask.setBackgroundResource(R.color.day);
+                ddnMask.setBackgroundResource(R.color.transparent);
                 float dusk = prefs.getFloat("DuskBright", (float) 0.1);
                 layoutParams.screenBrightness = dusk;
                 getWindow().setAttributes(layoutParams);
                 break;
                 
             case 2:
-                ddnMask.setBackgroundResource(R.color.night);
+                ddnMask.setBackgroundResource(R.color.redtint);
                 float night = prefs.getFloat("NightBright", (float) 0.05);
                 layoutParams.screenBrightness = night;
                 getWindow().setAttributes(layoutParams);
@@ -233,13 +312,71 @@ public class MapActivity extends Activity {
         //mearure overlay setup
         measureOverlay = new MeasureOverlay(this);
         
-        //buttons
+        //arbitrary measure tool overlay setup
+        measureToolOverlay = new MeasureToolOverlay(this);
+        measureToolOverlay.disable(); //we only enable this when user wants to measure arbitrarily
+        
+        featuresDb = new FeaturesDbHelper(this).getWritableDatabase();
+        
+        //waypoint overlay
+        final ArrayList<OverlayItem> waypoints = new ArrayList<OverlayItem>();
+        //waypoints.add(new OverlayItem("Zero", "Lat Long 0", new GeoPoint(0, 0)));
+        ItemizedIconOverlay.OnItemGestureListener<OverlayItem> waypointListener =  new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+            public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MapActivity.this);
+                builder.setTitle( "Delete mark?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    
+                    public void onClick(DialogInterface dialog, int which) {
+                        String sql = String.format("delete from waypoints where latitude is %s and longitude is %s;", item.getPoint().getLatitudeE6(),item.getPoint().getLongitudeE6());
+                        featuresDb.execSQL(sql);
+                        waypointOverlay.removeItem(index);
+                        mapView.invalidate();
+                        return;
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        return;
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
+                return true;
+            }
+            public boolean onItemLongPress(final int index, final OverlayItem item) {
+                return false;
+            }
+        };
+        
+        waypointOverlay = new ItemizedIconOverlay<OverlayItem>(waypoints, getResources().getDrawable(R.drawable.greenflag), waypointListener , mResourceProxy);
+        WaypointFunctions.addWayPointsToOverlay(this, waypointOverlay, featuresDb);
+        
+        //TODO:
+        //route overlay
+        
+        //TODO:
+        //track overlay
+        
+        //control buttons
         btnZoomIn = (Button) findViewById(R.id.btnZoomIn);
         btnZoomOut = (Button) findViewById(R.id.btnZoomOut);
         btnFollow = (Button) findViewById(R.id.btnFollow);
+        btnMenu = (Button) findViewById(R.id.menu);
+        btnMeasure = (Button) findViewById(R.id.measure);
+        btnTrack = (Button) findViewById(R.id.track);
+        btnRoute = (Button) findViewById(R.id.route);
+        btnWaypoint = (Button) findViewById(R.id.waypoint);
         btnZoomIn.setOnClickListener(ZoomInListener);
         btnZoomOut.setOnClickListener(ZoomOutListener);
         btnFollow.setOnClickListener(FollowListener);
+        
+        //extra buttons
+        btnMenu.setOnClickListener(BtnMenuListener);
+        btnMeasure.setOnClickListener(BtnMeasureListener);
+        btnTrack.setOnClickListener(BtnTrackListener);
+        btnRoute.setOnClickListener(BtnRouteListener);
+        btnWaypoint.setOnClickListener(BtnWaypointListener);
         
         //settings
         mapView.setKeepScreenOn(true);
@@ -250,6 +387,7 @@ public class MapActivity extends Activity {
     
     @Override
     public void onPause() {
+        featuresDb.close();
         mLocationOverlay.disableMyLocation(); //we don't need the gps when paused
         chartOverlays.removeAll();
         StorePreferences(false); //set warning to not show again
@@ -267,6 +405,9 @@ public class MapActivity extends Activity {
     
     @Override
     public void onResume() {
+        if (!featuresDb.isOpen())
+            featuresDb = new FeaturesDbHelper(this).getWritableDatabase();
+        
         //see if the base map style has changed and restart activity if necessary
         String defStyle = this.getResources().getStringArray(R.array.base_maps)[0];
         String requestedStyle;
@@ -288,7 +429,7 @@ public class MapActivity extends Activity {
             gemfCollection = new GemfCollection();
             editor.putBoolean("RefreshGemf", false); //we don't need to refresh again
             refreshChartLayer();
-        } else if ( !(chartOverlays==null) ) {
+        } else if ( chartOverlays!=null ) {
             chartOverlays.addAll();
         }
         
@@ -296,16 +437,16 @@ public class MapActivity extends Activity {
         mLocationOverlay.enableMyLocation();
         
         //setup buttons according to preferences
-        LinearLayout llb = (LinearLayout) this.findViewById(R.id.linearLayout_buttons);
-        llb.removeView(btnZoomIn);
-        llb.removeView(btnZoomOut);
-        llb.removeView(btnFollow);
+        RelativeLayout ctrlBtnLayout = (RelativeLayout) this.findViewById(R.id.control_buttons);
+        ctrlBtnLayout.removeView(btnZoomIn);
+        ctrlBtnLayout.removeView(btnZoomOut);
+        ctrlBtnLayout.removeView(btnFollow);
         if (prefs.getBoolean("ZoomBtnPref", true)) {
-            llb.addView(btnZoomIn);
-            llb.addView(btnZoomOut);
-            llb.addView(btnFollow);
+            ctrlBtnLayout.addView(btnZoomIn);
+            ctrlBtnLayout.addView(btnZoomOut);
+            ctrlBtnLayout.addView(btnFollow);
         } else
-            llb.addView(btnFollow);
+            ctrlBtnLayout.addView(btnFollow);
        
         //ddn mode
         setBrightMode();
@@ -326,22 +467,17 @@ public class MapActivity extends Activity {
         Intent settings = new Intent(this, SettingsDialog.class);
         Intent help = new Intent(this, Help.class);
         
-        switch (item.getItemId()) 
-        {
-            case R.id.mapmode:
+        switch (item.getItemId()) {
+            case R.id.display:
                 String[] regionItems = {"None"};
                 if (gemfCollection.getFileList().length > 0)
                     regionItems = gemfCollection.getFileList();
                 DisplayMode displayMode = new DisplayMode(this, regionItems);
-                displayMode.setTitle( this.getResources().getString(R.string.displaymode) );
+                displayMode.setTitle( this.getResources().getString(R.string.display) );
                 displayMode.setCanceledOnTouchOutside(false);
                 displayMode.setCancelable(true);
                 displayMode.show();
                 return true;
-                
-//            case R.id.measure:
-//                measure();
-//                return true;
                 
             case R.id.settings:
                 startActivity(settings);

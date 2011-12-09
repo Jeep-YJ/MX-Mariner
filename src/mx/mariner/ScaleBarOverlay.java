@@ -1,3 +1,5 @@
+// Modified by Will Kamp <manimaul!gmail.com> for MxMariner
+
 package mx.mariner;
 
 /**
@@ -109,20 +111,20 @@ public class ScaleBarOverlay extends Overlay implements GeoConstants {
         this.activity = activity;
 
         this.barPaint = new Paint();
-        this.barPaint.setColor(activity.getResources().getColor(R.color.hud_txt));
+        this.barPaint.setColor(activity.getResources().getColor(R.color.greenglo));
         this.barPaint.setAntiAlias(true);
         this.barPaint.setStyle(Style.FILL);
         this.barPaint.setAlpha(255);
 
         this.textPaint = new Paint();
-        this.textPaint.setColor(activity.getResources().getColor(R.color.hud_txt));
+        this.textPaint.setColor(activity.getResources().getColor(R.color.greenglo));
         this.textPaint.setAntiAlias(true);
         this.textPaint.setStyle(Style.FILL);
         this.textPaint.setAlpha(255);
         this.textPaint.setTextSize(textSize);
         
         this.textBgPaint = new Paint();
-        this.textBgPaint.setColor(activity.getResources().getColor(R.color.hud_bg));
+        this.textBgPaint.setColor(activity.getResources().getColor(R.color.smokey));
 
         this.xdpi = this.activity.getResources().getDisplayMetrics().xdpi;
         this.ydpi = this.activity.getResources().getDisplayMetrics().ydpi;

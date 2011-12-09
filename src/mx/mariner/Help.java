@@ -1,3 +1,7 @@
+// Copyright (C) 2011 by Will Kamp <manimaul!gmail.com>
+// Distributed under the terms of the Simplified BSD Licence.
+// See license.txt for details
+
 package mx.mariner;
 
 import android.app.Activity;
@@ -20,11 +24,5 @@ public class Help extends Activity {
         webSettings.setSupportZoom(true);
         mWebView.loadUrl("file:///android_asset/help.html");
     }
-    
-//    @Override
-//    public void onBackPressed() {
-//        startActivity(new Intent(this, MapActivity.class));
-//        finish();
-//        return;
-//    }
+
 }

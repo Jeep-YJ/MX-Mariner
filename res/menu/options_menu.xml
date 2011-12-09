@@ -1,14 +1,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/mapmode"
-        android:title="@string/displaymode" 
+        android:id="@+id/display"
+        android:title="@string/display" 
         android:icon="@drawable/display">
     </item>
-<!--     <item
-        android:id="@+id/measure"
-        android:title="@string/measure" 
-        android:icon="@drawable/measure">
-    </item> -->
     <item
         android:id="@+id/settings"
         android:title="@string/settings" 
@@ -17,6 +12,6 @@
     <item
         android:id="@+id/help"
         android:title="@string/help" 
-        android:icon="@drawable/about">
+        android:icon="@drawable/help">
     </item>
 </menu>

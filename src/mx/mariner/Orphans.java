@@ -1,3 +1,7 @@
+// Copyright (C) 2011 by Will Kamp <manimaul!gmail.com>
+// Distributed under the terms of the Simplified BSD Licence.
+// See license.txt for details
+
 package mx.mariner;
 
 import java.io.IOException;
@@ -7,7 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
 
-public class Orphans extends AsyncTask<Void, String, Boolean>{
+public class Orphans extends AsyncTask<Void, String, Void>{
     private MapActivity mapActivity;
     private GemfCollection gemfCollection;
     private final String tag = "MXM";
@@ -26,7 +30,7 @@ public class Orphans extends AsyncTask<Void, String, Boolean>{
     }
 
     @Override
-    protected Boolean doInBackground(Void... params) {
+    protected Void doInBackground(Void... params) {
         //look for regions with installeddate of 0 in database that have corresponding <region>.data & <region>.gemf files on sd card
         //reinstall cached data for these orphaned regions
         SQLiteDatabase regiondb = (new RegionDbHelper(mapActivity)).getWritableDatabase();
@@ -53,7 +57,7 @@ public class Orphans extends AsyncTask<Void, String, Boolean>{
             Log.i(tag, "finished installing orphaned data : "+orphans[i]);
         }
         regiondb.close();
-        return true;
+        return null;
     }
     
     protected void onProgressUpdate(String... progress){
@@ -61,7 +65,7 @@ public class Orphans extends AsyncTask<Void, String, Boolean>{
     }
     
     @Override
-    public void onPostExecute(Boolean result) {
+    public void onPostExecute(Void result) {
         progressDialog.dismiss();
         
         if (mapActivity.warning)
@@ -74,8 +78,7 @@ public class Orphans extends AsyncTask<Void, String, Boolean>{
             mapActivity.editor.commit();
         }
         
-        mapActivity.chartOverlays = new ChartOverlays(mapActivity);
-        mapActivity.chartOverlays.addAll();
+        mapActivity.initChartLayer();
         
     }
 

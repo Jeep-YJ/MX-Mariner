@@ -49,7 +49,6 @@ import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -84,7 +83,6 @@ public class MxMyLocationOverlay extends Overlay implements IMyLocationOverlay, 
     private final MapActivity mapActivity;
     protected final TextView sogTxt;
     protected final TextView cogTxt;
-    protected final Button btnFollow;
 
     private final MapController mMapController;
     private final LocationManager mLocationManager;
@@ -156,7 +154,6 @@ public class MxMyLocationOverlay extends Overlay implements IMyLocationOverlay, 
         thisActivity = mActivity;
         sogTxt = (TextView) thisActivity.findViewById(R.id.sog);
         cogTxt = (TextView) thisActivity.findViewById(R.id.cog);
-        btnFollow = (Button) thisActivity.findViewById(R.id.btnFollow);
         mLocationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
         mSensorManager = (SensorManager) ctx.getSystemService(Context.SENSOR_SERVICE);
         final WindowManager windowManager = (WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE);
@@ -407,7 +404,8 @@ public class MxMyLocationOverlay extends Overlay implements IMyLocationOverlay, 
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
             if ( mFollow ) {
                 disableFollowLocation();
-                btnFollow.setVisibility(View.VISIBLE);
+                mapActivity.btnFollow.setVisibility(View.VISIBLE);
+                mapActivity.measureOverlay.enable();
             }
         }
         return super.onTouchEvent(event, mapView);
@@ -517,7 +515,8 @@ public class MxMyLocationOverlay extends Overlay implements IMyLocationOverlay, 
      */
     public void enableFollowLocation() {
         mFollow = true;
-        btnFollow.setVisibility(View.GONE);
+        mapActivity.btnFollow.setVisibility(View.GONE);
+        mapActivity.measureOverlay.disable();
         Toast.makeText(thisActivity, "GPS follow mode is ON.", Toast.LENGTH_SHORT).show();
 
         // set initial location when enabled
@@ -540,7 +539,6 @@ public class MxMyLocationOverlay extends Overlay implements IMyLocationOverlay, 
     public void disableFollowLocation() {
         mFollow = false;
         Toast.makeText(thisActivity, "GPS follow mode is OFF.", Toast.LENGTH_SHORT).show();
-        btnFollow.setVisibility(View.VISIBLE);
     }
 
     /**

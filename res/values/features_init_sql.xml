@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sql_waypoints_table">
+        CREATE TABLE waypoints ( 
+            iconindex      INTEGER,
+            name        TEXT,
+            description TEXT,
+            latitude    INTEGER,
+            longitude   INTEGER 
+        );
+    </string>
+    <string name="sql_routes_table">
+        CREATE TABLE routes ( 
+            routeid       INTEGER PRIMARY KEY AUTOINCREMENT,
+            name          TEXT,
+            description   TEXT,
+            origin        TEXT,
+            destination   TEXT,
+            planspeed     INTEGER,
+            departuretime INTEGER,
+            color         TEXT 
+        );
+    </string>
+    <string name="sql_routepoints_table">
+        CREATE TABLE routepoints ( 
+            pointid     INTEGER PRIMARY KEY AUTOINCREMENT,
+            routeid     INTEGER,
+            nextpointid INTEGER,
+            latitude    INTEGER,
+            longitude   INTEGER 
+        );
+    </string>
+    <string name="sql_tracks_table">
+        CREATE TABLE tracks ( 
+            trackid     INTEGER PRIMARY KEY AUTOINCREMENT,
+            name        TEXT,
+            description TEXT,
+            origin      TEXT,
+            destination TEXT,
+            starttime   INTEGER,
+            stoptime    INTEGER,
+            color       TEXT 
+        );
+    </string>
+    <string name="sql_trackpoints_table">
+        CREATE TABLE trackpoints ( 
+            pointid     INTEGER PRIMARY KEY AUTOINCREMENT,
+            trackid     INTEGER,
+            nextpointid INTEGER,
+            latitude    INTEGER,
+            longitude   INTEGER 
+        );
+    </string>
+</resources>

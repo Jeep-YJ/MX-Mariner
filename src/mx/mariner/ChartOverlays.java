@@ -1,3 +1,7 @@
+// Copyright (C) 2011 by Will Kamp <manimaul!gmail.com>
+// Distributed under the terms of the Simplified BSD Licence.
+// See license.txt for details
+
 package mx.mariner;
 
 import java.io.File;
@@ -65,11 +69,23 @@ public class ChartOverlays {
             overlays.addAll(outlineCollection);
         }
         
+        //waypoint overlay
+        overlays.add(mapActivity.waypointOverlay);
+        
+        //route overlay
+        //TODO:
+        
+        //track overlay
+        //TODO:
+        
         //location overlay
         overlays.add(mapActivity.mLocationOverlay);
         
         //measure overlay
         overlays.add(mapActivity.measureOverlay);
+        
+        //arbitrary measure overlay
+        overlays.add(mapActivity.measureToolOverlay);
         
         //scalebar overlay
         overlays.add(mapActivity.mScaleBarOverlay);
