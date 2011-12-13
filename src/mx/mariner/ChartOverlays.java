@@ -85,7 +85,7 @@ public class ChartOverlays {
         overlays.add(mapActivity.measureOverlay);
         
         //arbitrary measure overlay
-        overlays.add(mapActivity.measureToolOverlay);
+        //overlays.add(mapActivity.measureToolOverlay);
         
         //scalebar overlay
         overlays.add(mapActivity.mScaleBarOverlay);
@@ -124,6 +124,7 @@ public class ChartOverlays {
             MxmBitmapTileSourceBase mBitmapTileSourceBase = new MxmBitmapTileSourceBase("RasterCharts", null, minZoom, maxZoom, 256, ".png");
             mapActivity.myProviders[0] = new MapTileFileArchiveProvider(new SimpleRegisterReceiver(mapActivity), mBitmapTileSourceBase, myArchives);
             MapTileProviderArray myGemfTileProvider = new MapTileProviderArray(mBitmapTileSourceBase, null, mapActivity.myProviders);
+            myGemfTileProvider.setUseDataConnection(false);
             myGemfOverlay = new TilesOverlay(myGemfTileProvider, mapActivity);
             myGemfOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
             

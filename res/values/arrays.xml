@@ -10,4 +10,12 @@
         <item>Dusk</item>
         <item>Night</item>
     </string-array>
+    <string-array name="latitudecardinals">
+        <item>North</item>
+        <item>South</item>
+    </string-array>
+    <string-array name="longitudecardinals">
+        <item>East</item>
+        <item>West</item>
+    </string-array>
 </resources>

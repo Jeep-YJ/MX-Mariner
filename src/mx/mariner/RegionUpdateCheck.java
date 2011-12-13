@@ -17,6 +17,8 @@ import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.ArrayList;
 
+import mx.mariner.util.ReadFile;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/scrollView1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scrollbars="vertical">
+        
+    <RelativeLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+    
+        <TextView
+            android:id="@+id/wpticontitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="5px"
+            android:layout_marginTop="10px"
+            android:text="Icon"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    
+        <Spinner
+            android:id="@+id/wpticonspinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/wpticontitle"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="5px" />
+    
+        <TextView
+            android:id="@+id/wptname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/wpticonspinner"
+            android:layout_marginLeft="5px"
+            android:layout_marginTop="10px"
+            android:text="Name"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    
+        <EditText
+            android:id="@+id/wptnametext"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/wptname"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="5px"
+            android:singleLine="true"
+            android:scrollHorizontally="false">
+        </EditText>
+    
+        <TextView
+            android:id="@+id/wptdesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/wptnametext"
+            android:layout_marginLeft="5px"
+            android:layout_marginTop="10px"
+            android:text="Description"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+        
+        <EditText
+            android:id="@+id/wptdesctext"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:lines="5"
+            android:maxLines="5"
+            android:maxLength="1500"
+            android:gravity="top|left"
+            android:layout_below="@+id/wptdesc"
+            android:layout_margin="5px"
+            android:inputType="textMultiLine"
+            android:scrollHorizontally="false"
+            android:scrollbars="vertical">
+        </EditText>
+        
+        <TextView
+            android:id="@+id/wptlat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/wptdesctext"
+            android:layout_marginLeft="5px"
+            android:layout_marginTop="10px"
+            android:text="Latitude"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
+    
+        </TextView>
+        
+        <LinearLayout
+            android:id="@+id/wptlatlayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/wptlat" >
+
+            <EditText
+                android:id="@+id/wptlatitude"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="5px"
+                android:layout_weight="1.5"
+                android:maxLength="10"
+                android:numeric="decimal"
+                android:singleLine="true"
+                android:text="00.0000000" >
+
+            </EditText>
+
+            <Spinner
+                android:id="@+id/wptlatspinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="5px"
+                android:layout_weight="1"
+                android:entries="@array/latitudecardinals" >
+
+            </Spinner>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/wptlon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/wptlatlayout"
+            android:layout_marginLeft="5px"
+            android:layout_marginTop="10px"
+            android:text="Longitude"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
+    
+        </TextView>
+        
+        <LinearLayout
+            android:id="@+id/wptlonlayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/wptlon" >
+
+            <EditText
+                android:id="@+id/wptlongitude"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="5px"
+                android:layout_weight="1.5"
+                android:maxLength="11"
+                android:numeric="decimal"
+                android:singleLine="true"
+                android:text="000.0000000" >
+
+            </EditText>
+
+            <Spinner
+                android:id="@+id/wptlonspinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="5px"
+                android:layout_weight="1"
+                android:entries="@array/longitudecardinals" >
+
+            </Spinner>
+        </LinearLayout>
+        
+        <CheckBox
+            android:id="@+id/wptdeletecheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/wptlonlayout"
+            android:gravity="right|center"
+            android:visibility="gone"
+            android:text="Delete" />
+        
+        <LinearLayout
+            android:id="@+id/wptlinearlayout1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/wptdeletecheck"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10px"
+            android:orientation="horizontal"
+            android:gravity="center" >
+            
+            <Button
+                android:id="@+id/wptcancel"
+                android:text="Cancel"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"/>
+    
+            <Button
+                android:id="@+id/wptok"
+                android:text="OK"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+            
+        </LinearLayout>
+    </RelativeLayout>
+
+</ScrollView>

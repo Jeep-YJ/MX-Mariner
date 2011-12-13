@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="src" path="osmdroid-thrid-party_src"/>
+	<classpathentry kind="src" path="osmdroid-android_src"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="/osmdroid-android/lib/apache-mime4j-0.6.jar"/>
+	<classpathentry kind="lib" path="/osmdroid-android/lib/httpmime-4.0.1.jar"/>
+	<classpathentry kind="lib" path="/osmdroid-android/lib/slf4j-android-1.5.8.jar"/>
+	<classpathentry kind="output" path="bin/classes"/>
+</classpath>

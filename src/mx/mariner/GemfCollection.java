@@ -34,7 +34,7 @@ public class GemfCollection {
     private String[] datList;
     private String[] regionList;
     private File fGemfDir;
-    private int minZoom = 100;
+    private int minZoom = 17;
     private int maxZoom = 0;
     private int gemfCount = 0;
     
@@ -144,8 +144,6 @@ public class GemfCollection {
                 Log.d(tag, e.getMessage());
             }
         }
-        if (minZoom == 100)
-                minZoom = maxZoom;
         if (debug) {
             Log.i(tag, "Min zoom in gemf collection: " + minZoom);
             Log.i(tag, "Max zoom in gemf collection: " + maxZoom);

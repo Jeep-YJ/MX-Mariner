@@ -126,7 +126,7 @@ public class ScaleBarOverlay extends Overlay implements GeoConstants {
         this.textBgPaint = new Paint();
         this.textBgPaint.setColor(activity.getResources().getColor(R.color.smokey));
 
-        this.xdpi = this.activity.getResources().getDisplayMetrics().xdpi;
+        this.xdpi = this.activity.getResources().getDisplayMetrics().xdpi; //exact pixels per inch
         this.ydpi = this.activity.getResources().getDisplayMetrics().ydpi;
 
         this.screenWidth = this.activity.getResources().getDisplayMetrics().widthPixels;

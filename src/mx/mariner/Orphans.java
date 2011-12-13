@@ -6,6 +6,8 @@ package mx.mariner;
 
 import java.io.IOException;
 
+import mx.mariner.util.ReadFile;
+
 import android.app.ProgressDialog;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;

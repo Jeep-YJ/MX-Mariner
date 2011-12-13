@@ -1,54 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sql_waypoints_table">
-        CREATE TABLE waypoints ( 
-            iconindex      INTEGER,
-            name        TEXT,
-            description TEXT,
-            latitude    INTEGER,
-            longitude   INTEGER 
+        CREATE TABLE wpt ( 
+            name      TEXT,
+            desc      TEXT,
+            sym       TEXT,
+            latitude  INTEGER,
+            longitude INTEGER 
         );
     </string>
     <string name="sql_routes_table">
-        CREATE TABLE routes ( 
-            routeid       INTEGER PRIMARY KEY AUTOINCREMENT,
+        CREATE TABLE rte (
+            id            INTEGER PRIMARY KEY AUTOINCREMENT,
             name          TEXT,
-            description   TEXT,
+            desc          TEXT,
             origin        TEXT,
             destination   TEXT,
             planspeed     INTEGER,
             departuretime INTEGER,
-            color         TEXT 
+            color         TEXT,
+            viz           BOOLEAN
         );
     </string>
     <string name="sql_routepoints_table">
-        CREATE TABLE routepoints ( 
-            pointid     INTEGER PRIMARY KEY AUTOINCREMENT,
-            routeid     INTEGER,
-            nextpointid INTEGER,
-            latitude    INTEGER,
-            longitude   INTEGER 
+        CREATE TABLE rtept ( 
+            id        INTEGER PRIMARY KEY AUTOINCREMENT,
+            rteid     INTEGER,
+            nextid    INTEGER,
+            latitude  INTEGER,
+            longitude INTEGER 
         );
     </string>
     <string name="sql_tracks_table">
-        CREATE TABLE tracks ( 
-            trackid     INTEGER PRIMARY KEY AUTOINCREMENT,
-            name        TEXT,
-            description TEXT,
-            origin      TEXT,
-            destination TEXT,
-            starttime   INTEGER,
-            stoptime    INTEGER,
-            color       TEXT 
+        CREATE TABLE trkseg ( 
+            id    INTEGER PRIMARY KEY AUTOINCREMENT,
+            name  TEXT,
+            desc  TEXT,
+            color TEXT,
+            viz   BOOLEAN
         );
     </string>
     <string name="sql_trackpoints_table">
-        CREATE TABLE trackpoints ( 
-            pointid     INTEGER PRIMARY KEY AUTOINCREMENT,
-            trackid     INTEGER,
-            nextpointid INTEGER,
-            latitude    INTEGER,
-            longitude   INTEGER 
+        CREATE TABLE trkpt ( 
+            id        INTEGER PRIMARY KEY AUTOINCREMENT,
+            trksegid  INTEGER,
+            nextid    INTEGER,
+            latitude  INTEGER,
+            longitude INTEGER  
         );
     </string>
 </resources>

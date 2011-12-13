@@ -6,15 +6,19 @@ package mx.mariner;
 
 import java.util.ArrayList;
 
+import mx.mariner.marks.WaypointDbFunctions;
+import mx.mariner.marks.WaypointMarkerIcons;
+
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.ResourceProxy;
+import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.tileprovider.tilesource.bing.BingMapTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.MapView.Projection;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.OverlayItem;
 
@@ -51,7 +55,7 @@ public class MapActivity extends Activity {
     // Fields
     //====================
 
-    private MapController mapController;
+    protected MapController mapController;
     private Orphans orphans;
     protected MapView mapView;
     private Activity mActivity;
@@ -75,20 +79,17 @@ public class MapActivity extends Activity {
     protected Button btnWaypoint;
     private boolean menuButtons = false;
     protected boolean warning;
-    private BingMapTileSource bingMapTileSource;
+    private BaseMapTileSource baseMapTileSource;
     protected AlertDialog warningAlert;
     private static AlertDialog.Builder warningDialog;
     protected MapTileModuleProviderBase[] myProviders = new MapTileModuleProviderBase[1];
     protected Location mLocation;
     protected ChartOverlays chartOverlays;
-    protected MxMyLocationOverlay mLocationOverlay;
+    protected LocationOverlay mLocationOverlay;
     protected ScaleBarOverlay mScaleBarOverlay;
     protected MeasureOverlay measureOverlay;
-    protected MeasureToolOverlay measureToolOverlay;
-    //TODO:
     protected ItemizedIconOverlay<OverlayItem> waypointOverlay;
-    //protected RoutOverlay routOverlay;
-    //protected TrackOverlay trackOverlay;
+    protected WaypointMarkerIcons waypointMarkerIcons;
 
     
     //====================
@@ -122,7 +123,13 @@ public class MapActivity extends Activity {
           //is there a better way?...zoom during follow is screwed up otherwise
             if (mLocationOverlay.isFollowLocationEnabled()) {
                 mLocationOverlay.disableFollowLocation();
-            }
+                btnFollow.setEnabled(true);
+                btnFollow.setBackgroundResource(R.drawable.follow);
+                measureOverlay.enable();
+                //btnFollow.setVisibility(View.VISIBLE);
+            } //else {
+            //    Toast.makeText(MapActivity.this, "Zoom: "+String.valueOf(mapView.getZoomLevel()), Toast.LENGTH_SHORT).show();
+            //}
             mapController.zoomIn();
         }
     };
@@ -132,7 +139,13 @@ public class MapActivity extends Activity {
             //is there a better way?...zoom during follow is screwed up otherwise
             if (mLocationOverlay.isFollowLocationEnabled()) {
                 mLocationOverlay.disableFollowLocation();
-            }
+                btnFollow.setEnabled(true);
+                btnFollow.setBackgroundResource(R.drawable.follow);
+                measureOverlay.enable();
+                //btnFollow.setVisibility(View.VISIBLE);
+            } //else {
+            //    Toast.makeText(MapActivity.this, "Zoom: "+String.valueOf(mapView.getZoomLevel()), Toast.LENGTH_SHORT).show();
+            //}
             mapController.zoomOut();
         }
     };
@@ -147,7 +160,19 @@ public class MapActivity extends Activity {
     private View.OnClickListener BtnMeasureListener = new View.OnClickListener() {
         
         public void onClick(View v) {
-            measureToolOverlay.StartMeasure();
+            
+            //MapActivity.this.getResources().getDisplayMetrics().widthPixels;
+            final int positionx = (int) (MapActivity.this.getResources().getDisplayMetrics().widthPixels / 2);
+            final int positiony = (int) (MapActivity.this.getResources().getDisplayMetrics().heightPixels / 2.6);
+            
+            final Projection projection = mapView.getProjection();
+            //relative to top left corner
+            final IGeoPoint adjusted = projection.fromPixels(positionx, positiony);
+            
+            measureOverlay.enable();
+            measureOverlay.setModeArbitrary();
+            mapController.animateTo(adjusted);
+            //mapView.postInvalidateDelayed(500);
         }
     };
     
@@ -170,8 +195,8 @@ public class MapActivity extends Activity {
     private View.OnClickListener BtnWaypointListener = new View.OnClickListener() {
         public void onClick(View v) {
             GeoPoint point = (GeoPoint) mapView.getMapCenter();
-            if (!WaypointFunctions.isWayPoint(featuresDb, point.getLatitudeE6(), point.getLongitudeE6())){
-                final NewWaypointDialog nwDlg = new NewWaypointDialog(MapActivity.this);
+            if (!WaypointDbFunctions.isWayPointInDb(featuresDb, point.getLatitudeE6(), point.getLongitudeE6())){
+                final WaypointDialog nwDlg = new WaypointDialog(MapActivity.this, point, -1);
                 nwDlg.show();
             } else {
                 Toast.makeText(MapActivity.this, "There already is a waypoint here!", Toast.LENGTH_SHORT).show();
@@ -182,7 +207,6 @@ public class MapActivity extends Activity {
     
     private View.OnClickListener BtnMenuListener = new View.OnClickListener() {
         public void onClick(View v) {
-            //TODO:
             if (menuButtons) {
                 menuButtons = false;
                 btnMeasure.setVisibility(View.GONE);
@@ -198,6 +222,36 @@ public class MapActivity extends Activity {
             }
         }
     };
+    
+    public void setFollowButtonEnabled(boolean enabled) {
+        btnFollow.setEnabled(enabled);
+        if (enabled) {
+            btnFollow.setBackgroundResource(R.drawable.follow);
+        } else {
+            btnFollow.setBackgroundResource(R.drawable.followdisabled);
+        }
+    }
+    
+    public void setExtraMenuButtonsEnabled(boolean enabled) {
+        btnMenu.setEnabled(enabled);
+        btnMeasure.setEnabled(enabled);
+        //btnTrack.setEnabled(enabled);
+        //btnRoute.setEnabled(enabled);
+        //btnWaypoint.setEnabled(enabled);
+        if (enabled) {
+            btnMenu.setBackgroundResource(R.drawable.menu);
+            btnMeasure.setBackgroundResource(R.drawable.measure);
+            //btnTrack.setBackgroundResource(R.drawable.route);
+            //btnRoute.setBackgroundResource(R.drawable.track);
+            //btnWaypoint.setBackgroundResource(R.drawable.waypoint);
+        } else {
+            btnMenu.setBackgroundResource(R.drawable.menudisabled);
+            btnMeasure.setBackgroundResource(R.drawable.measuredisabled);
+            //btnTrack.setBackgroundResource(R.drawable.routedisabled);
+            //btnRoute.setBackgroundResource(R.drawable.trackdisabled);
+            //btnWaypoint.setBackgroundResource(R.drawable.waypointdisabled);
+        }
+    }
     
     protected void initChartLayer() {
         chartOverlays = new ChartOverlays(this);
@@ -275,21 +329,22 @@ public class MapActivity extends Activity {
         mActivity = this;
         mResourceProxy = new DefaultResourceProxyImpl(this);
         
-        if (BingMapTileSource.getBingKey().length() == 0) {
-            BingMapTileSource.retrieveBingKey(this);
+        if (BaseMapTileSource.getBingKey().length() == 0) {
+            BaseMapTileSource.retrieveBingKey(this);
         }
-        bingMapTileSource = new BingMapTileSource(null);
-        if (!TileSourceFactory.containsTileSource(bingMapTileSource.name())) {
-            TileSourceFactory.addTileSource(bingMapTileSource);
+        baseMapTileSource = new BaseMapTileSource(null);
+        if (!TileSourceFactory.containsTileSource(baseMapTileSource.name())) {
+            TileSourceFactory.addTileSource(baseMapTileSource);
         }
+        
         
         String defStyle = this.getResources().getString(R.string.default_base_map);
         if (prefs.getString("BaseMapSetting", defStyle).equals(defStyle))
-            bingMapTileSource.setStyle(BingMapTileSource.IMAGERYSET_ROAD);
+            baseMapTileSource.setStyle(BaseMapTileSource.IMAGERYSET_ROAD);
         else
-            bingMapTileSource.setStyle(BingMapTileSource.IMAGERYSET_AERIALWITHLABELS);
+            baseMapTileSource.setStyle(BaseMapTileSource.IMAGERYSET_AERIALWITHLABELS);
         
-        ITileSource tileSource = TileSourceFactory.getTileSource(bingMapTileSource.name());
+        ITileSource tileSource = TileSourceFactory.getTileSource(baseMapTileSource.name());
         mapView.setTileSource(tileSource);
         
         mapView.setBuiltInZoomControls(false);
@@ -299,7 +354,7 @@ public class MapActivity extends Activity {
         mapController.setCenter(new GeoPoint(start_lat, start_lon));
         
         //location overlay setup
-        mLocationOverlay = new MxMyLocationOverlay(this, mapView, mActivity, mResourceProxy);
+        mLocationOverlay = new LocationOverlay(this, mapView, mActivity, mResourceProxy);
         
         //scale-bar overlay setup
         mScaleBarOverlay = new ScaleBarOverlay(this);
@@ -312,36 +367,15 @@ public class MapActivity extends Activity {
         //mearure overlay setup
         measureOverlay = new MeasureOverlay(this);
         
-        //arbitrary measure tool overlay setup
-        measureToolOverlay = new MeasureToolOverlay(this);
-        measureToolOverlay.disable(); //we only enable this when user wants to measure arbitrarily
-        
+        //database for waypoints route and tracks
         featuresDb = new FeaturesDbHelper(this).getWritableDatabase();
         
         //waypoint overlay
         final ArrayList<OverlayItem> waypoints = new ArrayList<OverlayItem>();
-        //waypoints.add(new OverlayItem("Zero", "Lat Long 0", new GeoPoint(0, 0)));
         ItemizedIconOverlay.OnItemGestureListener<OverlayItem> waypointListener =  new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
             public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MapActivity.this);
-                builder.setTitle( "Delete mark?");
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    
-                    public void onClick(DialogInterface dialog, int which) {
-                        String sql = String.format("delete from waypoints where latitude is %s and longitude is %s;", item.getPoint().getLatitudeE6(),item.getPoint().getLongitudeE6());
-                        featuresDb.execSQL(sql);
-                        waypointOverlay.removeItem(index);
-                        mapView.invalidate();
-                        return;
-                    }
-                });
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        return;
-                    }
-                });
-                AlertDialog alert = builder.create();
-                alert.show();
+                final WaypointDialog nwDlg = new WaypointDialog(MapActivity.this, item.getPoint(), index);
+                nwDlg.show();
                 return true;
             }
             public boolean onItemLongPress(final int index, final OverlayItem item) {
@@ -349,8 +383,10 @@ public class MapActivity extends Activity {
             }
         };
         
-        waypointOverlay = new ItemizedIconOverlay<OverlayItem>(waypoints, getResources().getDrawable(R.drawable.greenflag), waypointListener , mResourceProxy);
-        WaypointFunctions.addWayPointsToOverlay(this, waypointOverlay, featuresDb);
+        waypointMarkerIcons = new WaypointMarkerIcons(this);
+        waypointOverlay = new ItemizedIconOverlay<OverlayItem>(waypoints, getResources().getDrawable(waypointMarkerIcons.getRids()[0]), 
+                waypointListener , mResourceProxy);
+        WaypointDbFunctions.addWayPointsFromDbToOverlay(this, waypointOverlay, featuresDb, waypointMarkerIcons);
         
         //TODO:
         //route overlay
@@ -412,11 +448,11 @@ public class MapActivity extends Activity {
         String defStyle = this.getResources().getStringArray(R.array.base_maps)[0];
         String requestedStyle;
         if (prefs.getString("BaseMapSetting", defStyle).equals(defStyle)) {
-            requestedStyle = BingMapTileSource.IMAGERYSET_ROAD;
+            requestedStyle = BaseMapTileSource.IMAGERYSET_ROAD;
         } else {
-            requestedStyle = BingMapTileSource.IMAGERYSET_AERIALWITHLABELS;
+            requestedStyle = BaseMapTileSource.IMAGERYSET_AERIALWITHLABELS;
         }
-        String setStyle = bingMapTileSource.getStyle();
+        String setStyle = baseMapTileSource.getStyle();
         if (!requestedStyle.equals(setStyle)) {
             Log.i(tag, "Base map preference changed; restarting activity...");
             Restart();

@@ -21,7 +21,7 @@ public class DisplayMode extends Dialog {
     public DisplayMode(final MapActivity ctx, final String[] regionItems) {
         super(ctx); //create default dialog window
         mapActivity = ctx;
-        this.setContentView(R.layout.map_mode);
+        this.setContentView(R.layout.displaydialog);
         
         Button okButton = (Button) findViewById(R.id.buttonOK);
         okButton.setOnClickListener(new View.OnClickListener() {
